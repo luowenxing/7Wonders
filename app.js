@@ -1,8 +1,9 @@
     var gameport        = process.env.PORT || 4004,
 
-        io              = require('socket.io'),
         express         = require('express'),
-        UUID            = require('node-uuid'),
+        io              = require('socket.io'),
+        
+        UUID            = require('uuid'),
 
         verbose         = false,
         http            = require('http'),
@@ -22,23 +23,12 @@
     app.get( '/client/*' , function( req, res, next ) {
         var file = req.params[0];
         if(verbose) console.log('\t :: Express :: file requested : ' + file);
-        res.sendfile( __dirname + '/' + file );
+        res.sendfile( __dirname + '/client/' + file );
 
     }); 
 
 
     var sio = io.listen(server);
-
-
-    sio.configure(function (){
-
-        sio.set('log level', 0);
-
-        sio.set('authorization', function (handshakeData, callback) {
-          callback(null, true); // error first callback style
-        });
-
-    });
 
 
     sio.sockets.on('connection', function (client) {
@@ -49,6 +39,13 @@
 
         console.log('\t socket.io:: player ' + client.userid + ' connected');
         
+        client.join('7wonders')
+
+        sio.in('7wonders').clients(function(error, clients){
+            if (error) throw error;
+            console.log(clients); // => [Anw2LatarvGVVXEIAAAD]
+        });
+
 
         client.on('message', function(m) {
 
