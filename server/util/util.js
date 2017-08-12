@@ -16,3 +16,37 @@ exports.flatten = function(arr) {
     flat(arr)
     return result
 }
+
+exports.groupBy = function(arr,condition) {
+    var result = {}
+    arr.forEach( item => {
+        var key = condition(item)
+        result[key] = result[key] || []
+        result[key].push(item)
+    })
+    return result
+}
+
+exports.shuffle = function(arr) {
+    var temp = null,swapIndex = 0
+        length = arr.length
+    for(var i=0;i<length;i++) {
+        swapIndex = Math.floor(Math.random() * length)
+        temp = arr[i] 
+        arr[i] = arr[swapIndex]
+        arr[swapIndex] = temp
+    }
+    return arr
+}
+
+exports.divide = function(arr,parts) {
+    var index = 0,
+        length = arr.length,
+        results = [],
+        steps = Math.ceil(length / parts)
+    while(index < arr.length) {
+        results.push(arr.slice(index,index+steps))
+        index = index + steps
+    }
+    return results
+}

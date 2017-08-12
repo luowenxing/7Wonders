@@ -7,13 +7,5 @@
 
 </body>
 <script type="text/javascript" src="js/socket.io.js"></script>
-<script type="text/javascript">
-	var socket = io.connect('http://localhost:4004');
-	socket.on('onconnected', function (data) {
-    	console.log(data);
-    	socket.emit('message', { my: 'data' });
-  	});
-
-
-</script>
+<script type="text/javascript" src="js/game.js"></script>
 </html>

@@ -19,7 +19,7 @@ var {
     Indicators
 } = require('../util/consts.js')
 
-var { flatten } = require('../util/util.js')
+var { flatten,groupBy,shuffle,divide } = require('../util/util.js')
 
 // 棕色资源牌
 var Brown = [
@@ -892,7 +892,7 @@ var Yellow = flatten([
             minPlayers
         })
     ),
-    [4,6].map( minPlayers => 
+    [3,5,7].map( minPlayers => 
         new TradeFuncCard({
             name:'ARENA',
             costs:{
@@ -911,8 +911,20 @@ var Yellow = flatten([
 ])
 
 
-exports.CardCreator = function(playersCount) {
-    
+module.exports = function(playersCount) {
+    var groupedCards = groupBy(flatten([Brown,Grey,Yellow,Red,Blue,Green]).filter(card => {
+        return card.minPlayers <= playersCount
+    }), item => item.age)
+    // AGE3要从紫色卡中选出playersCount + 2张
+    groupedCards[3] = groupedCards[3].concat(shuffle(Purple).slice(0,playersCount + 2))
+    return Object.keys(groupedCards).map(age => {
+        // 三个AGE的牌全部洗匀
+        shuffle(groupedCards[age])
+        // 每个AGE的牌均分为playersCount份
+        return divide(groupedCards[age],playersCount)
+    })
 }
+
+
 
 

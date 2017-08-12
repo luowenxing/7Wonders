@@ -1,34 +1,24 @@
-function Player(){
-	this.wonder = null
-	this.money = 3
 
-	this.victories = []
-	this.defeats = []
+var { Color } = require('./util/consts.js')
 
-	this.resources = []
-
-	this.left = left
-	this.right = right
-
-	this.militaries = []
-	this.natureResourceFactories = []
-	this.manualResourceFactories = []
-	this.trades = []
-	this.technologies = []
-	this.infrastructures = []
-	this.guilds = []
+class Player {
+    constructor(options) {
+        // 初始化卡牌
+        this.cards = {...Color}
+        Object.keys(this.cards).forEach( key => this.cards[key] = [])
+        this.money = 3
+        this.freeBuilds = []
+        this.handCards = []
+        this.cardsName = []
+    }
+    build(card) {
+        this.cards[card.color].push(card)
+        this.freeBuilds = this.freeBuilds.concat(card.freeBuilds)
+        this.cardsName.push(card.name)
+    }
 }
 
-Player.prototype = {
-	canBuild:function(left,right){ 
-		return true
-	},
-	buildUp:function(card){
-
-	},
-
-}
-
+module.exports = Player
 
 
 
