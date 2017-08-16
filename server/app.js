@@ -5,7 +5,7 @@ var router = express.Router();
 var app = express();
 var server = require('http').Server(app);
 app.use(express.static(path.resolve(__dirname,'../client')));
-server.listen(80,function() {
+server.listen(8888,function() {
     console.log('server started')
 })
 // 创建socket服务

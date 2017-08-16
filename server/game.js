@@ -16,19 +16,5 @@ class Game {
         })
         this.cards = CardCreator(this.playersCount)
     }
-    canBuild(player,card) {
-        if(player.cardName[card.name]) {
-            // 同名建筑
-        } else {
-             if(player.freeBuilds[card.name]) {
-            // 免费建设链
-            } else {
 
-            }
-        }   
-       
-    }
-    getPlayers() {
-
-    }
 }
