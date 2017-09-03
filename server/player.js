@@ -16,18 +16,10 @@ class Player {
         this.cards[card.color].push(card)
         this.freeBuilds = this.freeBuilds.concat(card.freeBuilds)
         this.cardsName.push(card.name)
-        
     }
-    canBuild(player,card) {
-        if(player.cardName[card.name]) {
-            // 同名建筑
-        } else {
-             if(player.freeBuilds[card.name]) {
-            // 免费建设链
-            } else {
-
-            }
-        }   
+    // 弃掉一张，+3元
+    discard(){
+        this.money += 3
     }
 }
 

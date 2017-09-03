@@ -38,6 +38,13 @@ var Indicators = {
     ...Color
 }
 
+var GameStatus = {
+    Start:'Start',
+    WaitForChoice:'WaitForChoice',
+    NexrRound:'NexrRound',
+    NextAge:'NextAge'
+}
+
 module.exports = {
     Resource,
     Color,
