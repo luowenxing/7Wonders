@@ -1,7 +1,6 @@
 const {resolve} = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 var path = require('path')
-
 module.exports = {
     entry: {
         index: './js/index.js'
@@ -17,6 +16,7 @@ module.exports = {
                 test: /\.vue$/,
                 use: [{
                     loader: 'vue-loader',
+                    exclude: /node_modules/,
                     options: {
                         loaders: {
                             js: 'babel-loader',
@@ -24,12 +24,18 @@ module.exports = {
                         }
                     }
                 }],
-                exclude: /node_modules/
             },
             {
                 test: /\.js$/,
-                use: ['babel-loader'],
-                exclude: /node_modules/
+                exclude: /node_modules/,
+                include: [path.resolve(__dirname, "../shared")],
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['env'],
+                        plugins: ['transform-object-rest-spread']
+                    }
+                }
             },
             {
                 test: /\.css$/,

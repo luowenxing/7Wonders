@@ -8,7 +8,6 @@ class Player {
         Object.keys(this.cards).forEach( key => this.cards[key] = [])
         this.money = 3
         this.freeBuilds = []
-        this.handCards = []
         this.cardsName = []
         this.res = []
         this.orRes = []
@@ -29,7 +28,6 @@ class Player {
 
             }
         }   
-       
     }
 }
 

@@ -1,17 +1,18 @@
 
-import '../css/main.css';
+import '../assets/main.css';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Game from './components/Game';
-import store from './vuex/store'
+import HandCards from './components/HandCards';
+import Network from './lib/network.js';
 
 //the main entrance
 /* eslint-disable no-new */
+var b = {name:1}
+var a = {...b}
 Vue.use(Vuex)
 new Vue({
     el:'#application',
-    store,
     render(h) {
-        return h(Game);
+        return h(HandCards);
     }
 });

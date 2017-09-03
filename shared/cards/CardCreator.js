@@ -109,7 +109,7 @@ var Brown = [
             age:1,
             costMoney:1,
             color:Color.Brown,
-            ...options,
+            options,
         })
     ),
 
@@ -910,8 +910,7 @@ var Yellow = flatten([
     ),
 ])
 
-
-module.exports = function(playersCount) {
+var dividedCards = function(playersCount) {
     var groupedCards = groupBy(flatten([Brown,Grey,Yellow,Red,Blue,Green]).filter(card => {
         return card.minPlayers <= playersCount
     }), item => item.age)
@@ -924,6 +923,16 @@ module.exports = function(playersCount) {
         return divide(groupedCards[age],playersCount)
     })
 }
+
+var allCards = function(playersCount) {
+    return flattern(dividedCards(playersCount))
+}
+
+exports = {
+    allCards,
+    dividedCards
+}
+
 
 
 
