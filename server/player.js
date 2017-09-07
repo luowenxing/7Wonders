@@ -17,6 +17,9 @@ class Player {
         this.freeBuilds = this.freeBuilds.concat(card.freeBuilds)
         this.cardsName.push(card.name)
     }
+    buildWonder(card) {
+        
+    }
     // 弃掉一张，+3元
     discard(){
         this.money += 3

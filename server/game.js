@@ -19,9 +19,8 @@ class Game {
             this.players.push(new Player())
         }
         this.cards = dividedCards(this.playersCount)
-    }
-    getCurrentCards(index){
-        return this.cards[this.age][index]
+        this.roundCount = 0
+        this.round = 0
     }
     getNextRoundInfo(index){
         this.status = GameStatus.WaitForChoice
@@ -32,31 +31,59 @@ class Game {
         }
     }
     getCardsOfPlayer(index){
-        return this.cards[this.age][index]
+        let currIndex = (index + this.round) % this.playersCount
+        return this.cards[this.age][index + this.round]
     }
     shouldChoose(index,choice){
+        this.status = GameStatus.Wait
         let player = this.players[index]
-        let cards = this.getCurrentCards(index)
+        let cards = this.getCardsOfPlayer(index)
         let chooseIndex = choice.index
+        let card = cards[chooseIndex]
+        let success = true
         switch(choice.action) {
             case ChoiceAction.Build:
+                if(this.canBuild(index,card)){
+                    cards.splice(chooseIndex,1)
+                    player.build(card)
+                } else {
+                    success = false
+                }
                 break
             case ChoiceAction.Discard:
                 cards.splice(chooseIndex,1)
                 player.discard()
                 break
             case ChoiceAction.BuildWonder:
-
+                if(this.canBuildWonder(index)){
+                    cards.splice(chooseIndex,1)
+                    player.buildWonder(card)
+                }else {
+                    success = false
+                }
                 break
         }
-
-        return {
-            success:true,
-
+        if(success) {
+            this.shouldNextRound()
         }
-
+        return {success}
     }
-    canBuild(index){
+    shouldNextRound() {
+        this.roundCount++
+        if(this.roundCount == this.playersCount) {
+            this.roundCount = 0
+            this.round ++
+            if(this.round == this.playersCount - 1) {
+                this.round = 0
+                this.age = this.age + 1
+                this.status = GameStatus.NextAge
+                // TODO:计算军事冲突
+            } else {
+                this.status = GameStatus.NextRound
+            }
+        }
+    }
+    canBuild(index,card){
         let player = this.players[index]
         if(player.cardName[card.name]) {
             // 同名建筑
@@ -67,6 +94,11 @@ class Game {
 
             }
         }
+        return true
+    }
+    canBuildWonder(index) {
+        let player = this.players[index]
+        return true
     }
 
 }

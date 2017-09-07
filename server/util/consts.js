@@ -42,7 +42,8 @@ var GameStatus = {
     Start:'Start',
     WaitForChoice:'WaitForChoice',
     NexrRound:'NexrRound',
-    NextAge:'NextAge'
+    NextAge:'NextAge',
+    End:'End'
 }
 
 module.exports = {
