@@ -41,9 +41,15 @@ var Indicators = {
 var GameStatus = {
     Start:'Start',
     WaitForChoice:'WaitForChoice',
-    NexrRound:'NexrRound',
+    NextRound:'NexrRound',
     NextAge:'NextAge',
     End:'End'
+}
+
+var ChoiceAction = {
+    Build:'Build',
+    Discard:'Discard',
+    BuildWonder:'BuildWonder'
 }
 
 module.exports = {
@@ -51,5 +57,7 @@ module.exports = {
     Color,
     Directions,
     Technic,
-    Indicators
+    Indicators,
+    GameStatus,
+    ChoiceAction
 }

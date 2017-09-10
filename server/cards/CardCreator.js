@@ -109,7 +109,7 @@ var Brown = [
             age:1,
             costMoney:1,
             color:Color.Brown,
-            options,
+            ...options,
         })
     ),
 
@@ -928,7 +928,7 @@ var allCards = function(playersCount) {
     return flattern(dividedCards(playersCount))
 }
 
-exports = {
+module.exports = {
     allCards,
     dividedCards
 }

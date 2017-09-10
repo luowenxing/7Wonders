@@ -16,9 +16,13 @@ let clients = []
 let game
 
 sio.on('connection',function(socket) {
-    clients.push(socket)
-    socket.index = clients.length
+    console.log('player in')
+    if(clients.filter( x => socket.id === x.id ).length == 0) {
+        socket.index = clients.length
+        clients.push(socket)
+    }
     if(clients.length === 3) {
+        console.log('new game')
         game = new Game({
             playersCount:clients.length
         })
@@ -28,6 +32,7 @@ sio.on('connection',function(socket) {
     }
 
     socket.on('choose',function(choice){
+        console.log('player choose')
         let result = game.shouldChoose(socket.index,choice)
         let success = result.success
         socket.emit('chooseResult',{success})
@@ -47,6 +52,10 @@ sio.on('connection',function(socket) {
             }
         }
 
+    })
+    socket.on('disconnect',function(){
+        var index = clients.indexOf(socket)
+        clients.splice(index,1)
     })
 })
 

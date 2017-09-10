@@ -4,11 +4,11 @@ var path = require('path')
 
 module.exports = {
     entry: {
-        index: './js/index.js'
+        index: './client/js/index.js'
     },
     devtool: '#eval-source-map',
     output: {
-        path:path.resolve(__dirname,"dist"),
+        path:path.resolve(__dirname,"client","dist"),
         filename: '[name].[hash].bundle.js'
     },
     module: {
@@ -32,7 +32,7 @@ module.exports = {
                     loader:'babel-loader',
                     options:{
                         "presets": ["env"],
-                        "plugins": ["transform-object-rest-spread"]
+                        "plugins": ["transform-object-rest-spread","transform-es2015-modules-commonjs"]
                     }
                 },
                 include:[
@@ -63,13 +63,16 @@ module.exports = {
         extensions: [
             '.js',
             '.vue'
-        ]
+        ],
+        alias: {
+            'vue': 'vue/dist/vue.js'
+        }
     },
     plugins: [
         new HtmlWebpackPlugin({
             filename: 'index.html',
             inject: 'body',
-            template: 'index.html_vm',
+            template: './client/index.html_vm',
             hash: false
         })
     ]

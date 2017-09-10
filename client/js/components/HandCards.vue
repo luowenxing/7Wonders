@@ -1,33 +1,31 @@
 <template>
-    <div class="hand-cards">
-        <HandCard v-for="handCard in handCards" />
+    <div class="hand-cards"  >
+        <swipe :showIndicators="false" :auto="-1" style="width:100%">
+            <swipe-item v-for="(handCard,index) in handCards">
+                <HandCard :card="handCard" :index="index" />
+            </swipe-item>
+        </swipe>
     </div>
 </template>
 <script>
     import HandCard from './HandCard.vue'
-    import network from '../lib/network.js'
+    import Swipe from './swipe/swipe'
+    import SwipeItem from './swipe/swipe-item'
     export default {
-        data() {
-            return {
-                handCards:[{
-                    name:1
-                },{
-                    name:1
-                },{
-                    name:1
-                },{
-                    name:1
-                },{
-                    name:1
-                },{
-                    name:1
-                },{
-                    name:1
-                }]
+        methods:{
+            chooseCard(index){
+                console.log(index)
+            }
+        },
+        computed:{
+            handCards(){
+                return this.$store.state.cards
             }
         },
         components:{
-            HandCard
+            HandCard,
+            Swipe,
+            SwipeItem
         }
     }
 </script>
@@ -35,6 +33,8 @@
     .hand-cards {
         display:flex;
         -webkit-display:flex;
+        width: 100%;
+        height:100px;
     }
 
 </style>

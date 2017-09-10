@@ -1,13 +1,9 @@
 
 var Player = require('./player.js')
 var { dividedCards } = require('./cards/CardCreator.js')
-var { GameStatus } = require('./util/consts.js')
+var { GameStatus,ChoiceAction } = require('./util/consts.js')
 
-var ChoiceAction = {
-    Build:'Build',
-    Discard:'Discard',
-    BuildWonder:'BuildWonder'
-}
+
 
 class Game {
     constructor(options) {
@@ -19,8 +15,13 @@ class Game {
             this.players.push(new Player())
         }
         this.cards = dividedCards(this.playersCount)
-        this.roundCount = 0
         this.round = 0
+        let choosed = new Array(this.playersCount)
+        choosed.fill(false)
+        this.choosed = choosed
+    }
+    get allChoosed(){
+        return this.choosed.reduce( (item,sum) => (sum && item),true)
     }
     getNextRoundInfo(index){
         this.status = GameStatus.WaitForChoice
@@ -31,49 +32,56 @@ class Game {
         }
     }
     getCardsOfPlayer(index){
-        let currIndex = (index + this.round) % this.playersCount
-        return this.cards[this.age][index + this.round]
+        let step = this.age %2 === 0 ? -this.round : this.round
+        let currIndex = (index + step) % this.playersCount
+        currIndex = currIndex < 0 ? this.playersCount + currIndex : currIndex
+        return this.cards[this.age][currIndex]
     }
     shouldChoose(index,choice){
-        this.status = GameStatus.Wait
-        let player = this.players[index]
-        let cards = this.getCardsOfPlayer(index)
-        let chooseIndex = choice.index
-        let card = cards[chooseIndex]
         let success = true
-        switch(choice.action) {
-            case ChoiceAction.Build:
-                if(this.canBuild(index,card)){
+        let choosed = this.choosed[index]
+        if(choosed) {
+            success = false
+        } else {
+            this.status = GameStatus.WaitForChoice
+            let player = this.players[index]
+            let cards = this.getCardsOfPlayer(index)
+            let chooseIndex = choice.index
+            let card = cards[chooseIndex]
+            switch(choice.action) {
+                case ChoiceAction.Build:
+                    if(this.canBuild(index,card)){
+                        cards.splice(chooseIndex,1)
+                        player.build(card)
+                    } else {
+                        success = false
+                    }
+                    break
+                case ChoiceAction.Discard:
                     cards.splice(chooseIndex,1)
-                    player.build(card)
-                } else {
-                    success = false
-                }
-                break
-            case ChoiceAction.Discard:
-                cards.splice(chooseIndex,1)
-                player.discard()
-                break
-            case ChoiceAction.BuildWonder:
-                if(this.canBuildWonder(index)){
-                    cards.splice(chooseIndex,1)
-                    player.buildWonder(card)
-                }else {
-                    success = false
-                }
-                break
+                    player.discard()
+                    break
+                case ChoiceAction.BuildWonder:
+                    if(this.canBuildWonder(index)){
+                        cards.splice(chooseIndex,1)
+                        player.buildWonder(card)
+                    }else {
+                        success = false
+                    }
+                    break
+            }
         }
         if(success) {
-            this.shouldNextRound()
+            this.shouldNextRound(index)
         }
         return {success}
     }
-    shouldNextRound() {
-        this.roundCount++
-        if(this.roundCount == this.playersCount) {
-            this.roundCount = 0
+    shouldNextRound(index) {
+        this.choosed[index] = true
+        if(this.allChoosed) {
+            this.choosed.fill(false)
             this.round ++
-            if(this.round == this.playersCount - 1) {
+            if(this.round == 5) {
                 this.round = 0
                 this.age = this.age + 1
                 this.status = GameStatus.NextAge
@@ -85,7 +93,7 @@ class Game {
     }
     canBuild(index,card){
         let player = this.players[index]
-        if(player.cardName[card.name]) {
+        if(player.cardsName[card.name]) {
             // 同名建筑
         } else {
              if(player.freeBuilds[card.name]) {
