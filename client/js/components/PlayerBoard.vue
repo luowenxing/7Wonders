@@ -1,5 +1,8 @@
 <template>
    <div>
+        <Builds />
+        <Wonder />
+   </div>
 </template>
 <script>
     import Builds from './Builds'
