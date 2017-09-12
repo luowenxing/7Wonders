@@ -183,12 +183,12 @@
         this.pages = pages;
       },
 
-      doAnimate(towards, options) {
+      doAnimate(towards, options,customSpeed,customCallback) {
         if (this.$children.length === 0) return;
         if (!options && this.$children.length < 2) return;
 
         var prevPage, nextPage, currentPage, pageWidth, offsetLeft;
-        var speed = this.speed || 300;
+        var speed = customSpeed || this.speed || 300;
         var index = this.index;
         var pages = this.pages;
         var pageCount = pages.length;
@@ -258,6 +258,7 @@
           if (nextPage) {
             nextPage.style.display = '';
           }
+          customCallback && customCallback.apply(this,arguments)
         };
 
         setTimeout(() => {
@@ -425,7 +426,22 @@
         });
 
         this.dragState = {};
-      }
+      },
+      animateToIndex(toIndex) {
+        var direction = this.index > toIndex ? -1 : 1
+        var towards = direction < 0 ? 'prev' : 'next'
+        var speed = this.speed / Math.abs(this.index - toIndex)
+        var animateChain = (index) => {
+          if(index === toIndex) {
+
+          } else {
+            this.doAnimate(towards,null,speed,() => {
+              animateChain(index + direction)
+            })
+          }
+        }
+        animateChain(this.index)
+      },
     },
     destroyed() {
       if (this.timer) {
@@ -436,12 +452,6 @@
         clearTimeout(this.reInitTimer);
         this.reInitTimer = null;
       }
-    },
-    animateToIndex(index) {
-      if(index > this.pages.length) {
-        return 
-      }
-      
     },
     mounted() {
       this.ready = true;
