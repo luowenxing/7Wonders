@@ -8,6 +8,11 @@ export default new Vuex.Store({
         index:0,
         cards:[]
     },
+    getters: {
+        currentPlayer(state){
+            return state.players[state.index]
+        }
+    },
     mutations:{
         updateGame(store,info){
             store.players = info.players

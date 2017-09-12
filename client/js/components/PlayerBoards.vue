@@ -16,7 +16,9 @@
             }
         },
         components:{
-            PlayerBoard
+            PlayerBoard,
+            Swipe,
+            SwipeItem
         }
     }
 </script>

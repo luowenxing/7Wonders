@@ -1,10 +1,9 @@
 <template>
-    <div class="hand-cards"  >
-        <swipe :showIndicators="false" :auto="-1" style="width:100%">
-            <swipe-item v-for="(handCard,index) in handCards">
-                <HandCard :card="handCard" :index="index" />
-            </swipe-item>
-        </swipe>
+    <div class="hand-cards">
+        <HandCard v-for="(handCard,index) in handCards" 
+        :key="index"
+        :card="handCard" 
+        :index="index" />
     </div>
 </template>
 <script>
@@ -31,10 +30,12 @@
 </script>
 <style>
     .hand-cards {
-        display:flex;
-        -webkit-display:flex;
-        width: 100%;
-        height:100px;
+        position:fixed;
+        bottom:0;
+        width:100%;
+        height:200px;
+        display: flex;
+        display: -webkit-flex;
     }
 
 </style>

@@ -21,7 +21,7 @@ sio.on('connection',function(socket) {
         socket.index = clients.length
         clients.push(socket)
     }
-    if(clients.length === 3) {
+    if(clients.length === 4) {
         console.log('new game')
         game = new Game({
             playersCount:clients.length

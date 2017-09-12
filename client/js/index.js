@@ -2,7 +2,7 @@
 import '../assets/main.css';
 import Vue from 'vue';
 import Vuex from 'vuex';
-import HandCards from './components/HandCards';
+import Game from './components/Game';
 import store from './store/store'
 import SocketPlugin from './lib/SocketPlugin'
 //the main entrance
@@ -13,6 +13,6 @@ new Vue({
     store,
     el:'#application',
     render(h) {
-        return h(HandCards);
+        return h(Game);
     }
 });

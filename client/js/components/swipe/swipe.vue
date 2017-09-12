@@ -427,7 +427,6 @@
         this.dragState = {};
       }
     },
-
     destroyed() {
       if (this.timer) {
         clearInterval(this.timer);
@@ -438,7 +437,12 @@
         this.reInitTimer = null;
       }
     },
-
+    animateToIndex(index) {
+      if(index > this.pages.length) {
+        return 
+      }
+      
+    },
     mounted() {
       this.ready = true;
 

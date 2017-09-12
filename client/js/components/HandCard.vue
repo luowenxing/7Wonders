@@ -38,6 +38,7 @@
         flex:1;
         font-size:10px;
         color:white;
+        word-break: break-all;
     }
 
 </style>
