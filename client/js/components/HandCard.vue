@@ -4,7 +4,7 @@
     </div>
 </template>
 <script>
-    import { ChoiceAction } from '../../../server/util/consts'
+    import { ChoiceAction } from 'shared/util/consts'
     export default {
         methods:{
             chooseCard(){

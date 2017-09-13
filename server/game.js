@@ -24,11 +24,11 @@ class Game {
         return this.choosed.reduce( (item,sum) => (sum && item),true)
     }
     getNextRoundInfo(index){
-        this.status = GameStatus.WaitForChoice
         return {
             players:this.players,
             index:index,
-            cards:this.getCardsOfPlayer(index)
+            cards:this.getCardsOfPlayer(index),
+            status:this.status
         }
     }
     getCardsOfPlayer(index){

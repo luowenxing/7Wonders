@@ -6,7 +6,8 @@ export default new Vuex.Store({
     state:{
         players:[],
         index:0,
-        cards:[]
+        cards:[],
+        status:0
     },
     getters: {
         currentPlayer(state){
@@ -18,6 +19,10 @@ export default new Vuex.Store({
             store.players = info.players
             store.index = info.index
             store.cards = info.cards
+            store.status = info.status
+        },
+        updateStatus(store,status) {
+            store.status = status
         }
     }
 })

@@ -12,8 +12,8 @@ var SocketPlugin = {
         socket.on('nextRound',updateGame)
         socket.on('nextAge',updateGame)
 
-        socket.on('chooseResult',function(){
-
+        socket.on('chooseResult',function(result){
+            store.commit('updateStatus',result.status)
         })
 
         Vue.prototype.socket = {

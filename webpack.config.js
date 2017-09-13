@@ -35,10 +35,6 @@ module.exports = {
                         "plugins": ["transform-object-rest-spread","transform-es2015-modules-commonjs"]
                     }
                 },
-                include:[
-                    path.resolve(__dirname),
-                    path.resolve(__dirname,'../server'),
-                ],
                 exclude: /node_modules/
             },
             {
@@ -65,7 +61,8 @@ module.exports = {
             '.vue'
         ],
         alias: {
-            'vue': 'vue/dist/vue.js'
+            'vue': 'vue/dist/vue.js',
+            'shared':path.resolve(__dirname,'server'),
         }
     },
     plugins: [

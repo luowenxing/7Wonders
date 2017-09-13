@@ -35,7 +35,10 @@ sio.on('connection',function(socket) {
         console.log('player choose')
         let result = game.shouldChoose(socket.index,choice)
         let success = result.success
-        socket.emit('chooseResult',{success})
+        socket.emit('chooseResult',{
+            success,
+            status:success ? game.status : GameStatus.NeedRechoose
+        })
         if(success) {
             switch(game.status) {
                 // 是否所有人选择完毕，进入下一轮

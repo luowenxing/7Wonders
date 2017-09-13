@@ -183,12 +183,12 @@
         this.pages = pages;
       },
 
-      doAnimate(towards, options,customSpeed,customCallback) {
+      doAnimate(towards, options) {
         if (this.$children.length === 0) return;
         if (!options && this.$children.length < 2) return;
 
         var prevPage, nextPage, currentPage, pageWidth, offsetLeft;
-        var speed = customSpeed || this.speed || 300;
+        var speed = this.speed || 300;
         var index = this.index;
         var pages = this.pages;
         var pageCount = pages.length;
@@ -258,7 +258,6 @@
           if (nextPage) {
             nextPage.style.display = '';
           }
-          customCallback && customCallback.apply(this,arguments)
         };
 
         setTimeout(() => {
@@ -429,18 +428,22 @@
       },
       animateToIndex(toIndex) {
         var direction = this.index > toIndex ? -1 : 1
-        var towards = direction < 0 ? 'prev' : 'next'
-        var speed = this.speed / Math.abs(this.index - toIndex)
-        var animateChain = (index) => {
-          if(index === toIndex) {
-
-          } else {
-            this.doAnimate(towards,null,speed,() => {
-              animateChain(index + direction)
-            })
-          }
+        var pageWidth = this.$el.clientWidth
+        var currentPage = this.pages[toIndex]
+        var fromPage = this.pages[this.index]
+        var prevPage,nextPage
+        if(direction > 0) {
+          prevPage = fromPage
+        } else {
+          nextPage = fromPage
         }
-        animateChain(this.index)
+        this.doAnimate(null, {
+          offsetLeft: 0,
+          pageWidth: pageWidth,
+          prevPage: prevPage,
+          currentPage: currentPage,
+          nextPage: nextPage
+        });
       },
     },
     destroyed() {

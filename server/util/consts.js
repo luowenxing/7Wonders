@@ -41,6 +41,7 @@ var Indicators = {
 var GameStatus = {
     Start:'Start',
     WaitForChoice:'WaitForChoice',
+    NeedRechoose:'NeedRechoose',
     NextRound:'NexrRound',
     NextAge:'NextAge',
     End:'End'
