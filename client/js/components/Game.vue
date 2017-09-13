@@ -1,5 +1,6 @@
 <template>
     <div class="game-container">
+        <div style="position:absolute;top:0;right:0">{{index}}</div>
         <PlayerBoards class="game-item"/>
         <HandCards />
     </div>
@@ -8,6 +9,11 @@
     import PlayerBoards from './PlayerBoards'
     import HandCards from './HandCards'
     export default {
+        computed:{
+            index(){
+                return this.$store.state.index
+            }
+        },
         components:{
             PlayerBoards,
             HandCards

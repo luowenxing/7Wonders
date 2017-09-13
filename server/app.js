@@ -40,6 +40,7 @@ sio.on('connection',function(socket) {
             status:success ? game.status : GameStatus.NeedRechoose
         })
         if(success) {
+            game.shouldNextRound(socket.index)
             switch(game.status) {
                 // 是否所有人选择完毕，进入下一轮
                 case GameStatus.NextRound:

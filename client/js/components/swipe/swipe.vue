@@ -183,12 +183,12 @@
         this.pages = pages;
       },
 
-      doAnimate(towards, options) {
+      doAnimate(towards, options,customSpeed,customCallback) {
         if (this.$children.length === 0) return;
         if (!options && this.$children.length < 2) return;
 
         var prevPage, nextPage, currentPage, pageWidth, offsetLeft;
-        var speed = this.speed || 300;
+        var speed = customSpeed || this.speed || 300;
         var index = this.index;
         var pages = this.pages;
         var pageCount = pages.length;
@@ -258,6 +258,7 @@
           if (nextPage) {
             nextPage.style.display = '';
           }
+          customCallback && customCallback.apply(this,arguments)
         };
 
         setTimeout(() => {
@@ -426,25 +427,39 @@
 
         this.dragState = {};
       },
-      animateToIndex(toIndex) {
-        var direction = this.index > toIndex ? -1 : 1
-        var pageWidth = this.$el.clientWidth
-        var currentPage = this.pages[toIndex]
-        var fromPage = this.pages[this.index]
-        var prevPage,nextPage
-        if(direction > 0) {
-          prevPage = fromPage
-        } else {
-          nextPage = fromPage
-        }
-        this.doAnimate(null, {
-          offsetLeft: 0,
-          pageWidth: pageWidth,
-          prevPage: prevPage,
-          currentPage: currentPage,
-          nextPage: nextPage
-        });
-      },
+      animateToIndex(toIdx) {
+        if(this.index === toIdx) return;
+0        if (this.$children.length === 0) return;
+        if (this.$children.length < 2) return;
+        var currentPage, toPage, pageWidth;
+        var speed = this.speed || 300;
+        var pages = this.pages;
+        var pageCount = pages.length;
+        var index = this.index;
+        var isNext = toIdx > index;
+        if(toIdx >= pages.length ) return;
+        if(toIdx < 0 ) return;
+        pageWidth = this.$el.clientWidth * (isNext ? 1 : -1);
+        currentPage = pages[index];
+        toPage = pages[toIdx];
+        var newIndex = toIdx;
+        var oldPage = this.$children[index].$el;
+        
+        toPage.style.display = 'block';
+        this.translate(toPage, pageWidth);
+        var callback = () => {
+          if (newIndex !== undefined) {
+            var newPage = this.$children[newIndex].$el;
+            removeClass(oldPage, 'is-active');
+            addClass(newPage, 'is-active');
+            this.index = newIndex;
+          }
+        };
+        setTimeout(() => {
+            this.translate(currentPage, -pageWidth, speed, callback);
+            this.translate(toPage, 0, speed);
+        }, 10);
+      }
     },
     destroyed() {
       if (this.timer) {

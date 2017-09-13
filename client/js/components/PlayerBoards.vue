@@ -1,7 +1,10 @@
 <template>
     <swipe ref="swipe" :showIndicators="false" :auto="-1" style="width:100%">
         <swipe-item :key="index" v-for="(player,index) in players">
-            <PlayerBoard :player="player" />
+            <div style="height:100%">
+                <div>{{ index }}</div>
+                <PlayerBoard :player="player" /> 
+            </div>
         </swipe-item>
     </swipe>
 </template>

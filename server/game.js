@@ -71,9 +71,6 @@ class Game {
                     break
             }
         }
-        if(success) {
-            this.shouldNextRound(index)
-        }
         return {success}
     }
     shouldNextRound(index) {
