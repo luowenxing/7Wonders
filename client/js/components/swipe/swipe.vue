@@ -75,7 +75,7 @@
         dragging: false,
         userScrolling: false,
         animating: false,
-        index: 0,
+        index: this.initialIndex,
         pages: [],
         timer: null,
         reInitTimer: null,
@@ -112,6 +112,11 @@
       prevent: {
         type: Boolean,
         default: false
+      },
+
+      initialIndex:{
+        type:Number,
+        default:0
       }
     },
 
@@ -168,14 +173,13 @@
         this.noDrag = children.length === 1 && this.noDragWhenSingle;
 
         var pages = [];
-        this.index = 0;
 
-        children.forEach(function(child, index) {
+        children.forEach((child, index) => {
           pages.push(child.$el);
 
           removeClass(child.$el, 'is-active');
 
-          if (index === 0) {
+          if (index === this.index) {
             addClass(child.$el, 'is-active');
           }
         });
@@ -429,7 +433,7 @@
       },
       animateToIndex(toIdx) {
         if(this.index === toIdx) return;
-0        if (this.$children.length === 0) return;
+        if (this.$children.length === 0) return;
         if (this.$children.length < 2) return;
         var currentPage, toPage, pageWidth;
         var speed = this.speed || 300;
@@ -459,6 +463,12 @@
             this.translate(currentPage, -pageWidth, speed, callback);
             this.translate(toPage, 0, speed);
         }, 10);
+      }
+    },
+    watch:{
+      initialIndex(val){
+        this.index = val
+        this.reInitPages()
       }
     },
     destroyed() {

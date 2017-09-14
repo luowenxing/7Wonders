@@ -35,10 +35,11 @@
 </script>
 <style>
     .hand-card {
-        flex:1;
+        flex:none;
         font-size:10px;
         color:white;
         word-break: break-all;
+        width:21%;
     }
 
 </style>

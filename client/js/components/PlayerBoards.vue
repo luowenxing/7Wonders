@@ -1,5 +1,5 @@
 <template>
-    <swipe ref="swipe" :showIndicators="false" :auto="-1" style="width:100%">
+    <swipe ref="swipe" :showIndicators="false" :auto="-1" :initialIndex="index" style="width:100%">
         <swipe-item :key="index" v-for="(player,index) in players">
             <div style="height:100%">
                 <div>{{ index }}</div>

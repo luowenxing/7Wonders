@@ -28,7 +28,6 @@
     .builds-catagory-container .build{
         flex:none;
         width:100%;
-        height:20px;
         word-break: break-all;
         color: white;
     }

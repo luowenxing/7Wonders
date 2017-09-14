@@ -13,9 +13,11 @@ var defaultRes = {...Resource}
 for(var x in defaultRes) {
     defaultRes[x] = 0
 }
+var uuidv4 = require('uuid/v4');
 
 class BaseCard {
     constructor(options) {
+        this.uuid = uuidv4()
         this.name = options.name
         this.color = options.color
         this.minPlayers = options.minPlayers || 1

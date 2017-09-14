@@ -3,8 +3,6 @@ var Player = require('./player.js')
 var { dividedCards } = require('./cards/CardCreator.js')
 var { GameStatus,ChoiceAction } = require('./util/consts.js')
 
-
-
 class Game {
     constructor(options) {
         this.playersCount = options.playersCount
