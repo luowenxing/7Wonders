@@ -1,19 +1,12 @@
 <template>
-    <div class="hand-card" :style="handCardStyle" @click="chooseCard">
-        {{ card.name }}
+    <div class="hand-card">
+        <div :style="handCardStyle" class="card">
+            {{ card.name }}
+        </div>
     </div>
 </template>
 <script>
-    import { ChoiceAction } from 'shared/util/consts'
     export default {
-        methods:{
-            chooseCard(){
-                this.socket.choose({
-                    index:this.index,
-                    action:ChoiceAction.Build
-                })
-            }
-        },
         props:{
             card:{
                 type:Object,
@@ -35,11 +28,23 @@
 </script>
 <style>
     .hand-card {
-        flex:none;
         font-size:10px;
         color:white;
         word-break: break-all;
-        width:21%;
+        width:100%;
+        padding:4px;
+        height:100%;
+        position:absolute;
+        top:0;
+        left:0;
+        transition:all 1s;
+    }
+    .hand-card .card {
+        height:100%;
+        border-radius: 4px;
+        background-color: #fff;
+        overflow: hidden;
+        box-shadow: 0 2px 4px 0 black, 0 0 6px 0 black;
     }
 
 </style>

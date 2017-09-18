@@ -23,6 +23,12 @@ export default new Vuex.Store({
         },
         updateStatus(store,status) {
             store.status = status
+        },
+        deleteCard(store,index) {
+            store.cards.splice(index,1)
+        },
+        insertCard(store,{index,card}){
+            store.cards.splice(index,0,card)
         }
     }
 })

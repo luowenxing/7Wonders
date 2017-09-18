@@ -76,7 +76,7 @@ class Game {
         if(this.allChoosed) {
             this.choosed.fill(false)
             this.round ++
-            if(this.round == 5) {
+            if(this.round == 6) {
                 this.round = 0
                 this.age = this.age + 1
                 this.status = GameStatus.NextAge
