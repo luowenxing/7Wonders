@@ -44,10 +44,10 @@
 		left:0;
 	}
 	.card-detail-container {
-		width:80%;
-		height:300px;
+		width:60%;
+		height:48%;
 		margin:0 auto;
-		margin-top:10%;
+		margin-top:20%;
 		position: relative;
 	}
 

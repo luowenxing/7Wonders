@@ -36,30 +36,41 @@
                 showCardDetail:false,
                 choosenIndex:0,
                 choosenCard:null,
-                offsetStyle:[]
+                offsetStyle:[],
             }
         },
         methods:{
             beforeLeave(el){
-                
+                el.style.transition = 'none'
             },
             leave(el,done){
-                el.style.transform = `translateX(150%) translateY(-200%)`
-                setTimeout(done,1000)
+                if(this.status === 'NextRound') {
+
+                } else {
+                    let transform = el.style.transform
+                    Velocity(el, {
+                        translateX:['150%',this.getTranX(transform)],
+                        translateY:'-200%',
+                    }, { duration: 300,complete:done })
+                }
             },
             afterLeave(el){
                 //el.style.transform = ''
             },
             beforeEnter(el){
-                el.style.transform = `translateX(150%) translateY(-200%)`
+                el.style.transition = 'none'
             },
             enter(el,done){
                 let index = Array.prototype.indexOf.call(el.parentNode.children, el)
-                el.style.transform = this.offsetStyle[index]['transform']
-                setTimeout(done,1000)
+                let transform = this.offsetStyle[index]['transform']
+                Velocity(el, {translateX:[this.getTranX(transform),'150%'],translateY:['0%','-200%']}, { duration: 300,complete:done })
+
+               
+                // el.style.transform = this.offsetStyle[index]['transform']
+                // setTimeout(done,1000)
             },
             afterEnter(el){
-                //el.style.transform = ''
+                el.style.transition = ''
             },
             chooseCard(index){
                 this.choosenIndex = index
@@ -70,11 +81,18 @@
             cancelChoose(index,card) {
                 this.showCardDetail = false
                 this.$store.commit('insertCard',{index,card})
+            },
+            getTranX(transform) {
+                let transXRegex = /\.*translateX\((.*)\)/i
+                return transXRegex.exec(transform)[1];
             }
         },
         computed:{
             handCards(){
                 return this.$store.state.cards
+            },
+            status(){
+                return this.$store.state.status
             }
         },
         watch:{
