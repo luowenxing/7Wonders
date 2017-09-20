@@ -48,14 +48,48 @@
 
                 } else {
                     let transform = el.style.transform
+                    let width = el.offsetWidth
+                    let tranX = Number(this.getTranX(transform).replace('%',''))
+                    let windowWidth = window.outerWidth
+                    let windowHeight = window.outerHeight
+                    let left =  windowWidth / 2 - width * 2.4 / 2
+
+                    let height = el.offsetHeight
+                    let margin = windowWidth * 0.2
+                    let top = windowHeight - margin - 0.2 * windowHeight
+
                     Velocity(el, {
-                        translateX:['150%',this.getTranX(transform)],
-                        translateY:'-200%',
-                    }, { duration: 300,complete:done })
+                        translateX:'0%',
+                        left:tranX * width / 100 + 'px',
+                    },{
+                        duration:0,
+                        complete:() => {
+                            Velocity(el, {
+                                left:left + 'px',
+                                top:-top + 'px',
+                                width:'*=2.4',
+                                height:'*=2.4'
+                            }, { duration: 300,complete:done })
+                        }})
+
+                    
+                    // Velocity(el, {
+                    //     translateX:this.getTranX(transform)
+                    // },{
+                    //     duration:0,
+                    //     complete:() => {
+                    //         Velocity(el, {
+                    //             translateX:'150%',
+                    //             translateY:'-270%',
+                    //             scale:2.4
+                    //         }, { duration: 300,complete:done })
+                    //     }
+                    // })
                 }
             },
             afterLeave(el){
                 //el.style.transform = ''
+                this.showCardDetail = true
             },
             beforeEnter(el){
                 el.style.transition = 'none'
@@ -63,11 +97,18 @@
             enter(el,done){
                 let index = Array.prototype.indexOf.call(el.parentNode.children, el)
                 let transform = this.offsetStyle[index]['transform']
-                Velocity(el, {translateX:[this.getTranX(transform),'150%'],translateY:['0%','-200%']}, { duration: 300,complete:done })
+                Velocity(el, 
+                    {
+                        translateX:'150%',
+                        translateY:'-200%'
+                    },
+                    { 
+                        duration: 0,
+                        complete:() => {
+                            Velocity(el, {translateX:this.getTranX(transform),translateY:'0%'}, { duration: 300,complete:done })
+                        } 
+                    })
 
-               
-                // el.style.transform = this.offsetStyle[index]['transform']
-                // setTimeout(done,1000)
             },
             afterEnter(el){
                 el.style.transition = ''
@@ -75,7 +116,6 @@
             chooseCard(index){
                 this.choosenIndex = index
                 this.choosenCard = this.handCards[index]
-                this.showCardDetail = true
                 this.$store.commit('deleteCard',index)
             },
             cancelChoose(index,card) {
@@ -83,7 +123,7 @@
                 this.$store.commit('insertCard',{index,card})
             },
             getTranX(transform) {
-                let transXRegex = /\.*translateX\((.*)\)/i
+                let transXRegex = /\.*translateX\((.*?)\)/i
                 return transXRegex.exec(transform)[1];
             }
         },
