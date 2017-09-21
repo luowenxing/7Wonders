@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import { GameStatus } from 'shared/util/consts'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -24,7 +25,8 @@ export default new Vuex.Store({
         updateStatus(store,status) {
             store.status = status
         },
-        deleteCard(store,index) {
+        chooseCard(store,index) {
+            store.status = GameStatus.NeedChoose
             store.cards.splice(index,1)
         },
         insertCard(store,{index,card}){

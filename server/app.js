@@ -37,7 +37,7 @@ sio.on('connection',function(socket) {
         let success = result.success
         socket.emit('chooseResult',{
             success,
-            status:success ? game.status : GameStatus.NeedRechoose
+            status:success ? game.status : GameStatus.NeedChoose
         })
         if(success) {
             game.shouldNextRound(socket.index)

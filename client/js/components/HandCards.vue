@@ -16,6 +16,7 @@
                 :card="handCard" 
                 :index="index" 
                 :style="offsetStyle[index]"
+                :data-index="index"
                 @click.native="chooseCard(index)"/>
             </transition-group>
         </div>
@@ -30,6 +31,14 @@
     import HandCard from './HandCard.vue'
     import CardDetail from './CardDetail.vue'
     import Velocity from 'velocity-animate'
+    import { GameStatus } from 'shared/util/consts'
+
+    const aniMarginP = 0.2
+    const aniCardWidthP = 0.25
+    const aniCardHeightP = 0.2
+    const aniCardToWidthP = 1 - 2 * aniMarginP
+    const aniCardToHeightP = aniCardToWidthP / aniCardWidthP * aniCardHeightP
+
     export default {
         data(){
             return {
@@ -44,47 +53,25 @@
                 el.style.transition = 'none'
             },
             leave(el,done){
-                if(this.status === 'NextRound') {
-
-                } else {
-                    let transform = el.style.transform
-                    let width = el.offsetWidth
-                    let tranX = Number(this.getTranX(transform).replace('%',''))
-                    let windowWidth = window.outerWidth
-                    let windowHeight = window.outerHeight
-                    let left =  windowWidth / 2 - width * 2.4 / 2
-
-                    let height = el.offsetHeight
-                    let margin = windowWidth * 0.2
-                    let top = windowHeight - margin - 0.2 * windowHeight
-
-                    Velocity(el, {
-                        translateX:'0%',
-                        left:tranX * width / 100 + 'px',
-                    },{
+                let a = {...{a:1}}
+                if(this.status === GameStatus.Start) {
+                    done()
+                }
+                else if(this.status === GameStatus.NextRound) {
+                    let index = Number(el.dataset['index'])
+                    setTimeout(() => {  
+                        Velocity(el, {rotateY:'90deg'}, { duration: 150,complete:done })
+                    },index * 100)
+                } else if(this.status === GameStatus.NeedChoose){
+                    let transform = this.elTransform(el)
+                    Velocity(el, transform.min,{
                         duration:0,
                         complete:() => {
-                            Velocity(el, {
-                                left:left + 'px',
-                                top:-top + 'px',
-                                width:'*=2.4',
-                                height:'*=2.4'
-                            }, { duration: 300,complete:done })
-                        }})
-
-                    
-                    // Velocity(el, {
-                    //     translateX:this.getTranX(transform)
-                    // },{
-                    //     duration:0,
-                    //     complete:() => {
-                    //         Velocity(el, {
-                    //             translateX:'150%',
-                    //             translateY:'-270%',
-                    //             scale:2.4
-                    //         }, { duration: 300,complete:done })
-                    //     }
-                    // })
+                            Velocity(el, transform.max, { duration: 300,complete:done })
+                        }
+                    })
+                } else {
+                    done()
                 }
             },
             afterLeave(el){
@@ -92,31 +79,60 @@
                 this.showCardDetail = true
             },
             beforeEnter(el){
+                el.dataset['transform'] = el.style.transform
                 el.style.transition = 'none'
             },
             enter(el,done){
-                let index = Array.prototype.indexOf.call(el.parentNode.children, el)
-                let transform = this.offsetStyle[index]['transform']
-                Velocity(el, 
-                    {
-                        translateX:'150%',
-                        translateY:'-200%'
-                    },
-                    { 
-                        duration: 0,
+                if(this.status === GameStatus.Start) {
+                    done()
+                }
+                else if(this.status === GameStatus.NextRound) {
+                    let index = Number(el.dataset['index'])
+                    setTimeout(() => {  
+                        Velocity(el, {rotateY:['0deg','90deg']}, { duration: 150,complete:done })
+                    },index * 100 + 150)
+                } else if(this.status === GameStatus.NeedChoose) {
+                    let transform = this.elTransform(el)
+                    Velocity(el, transform.max,{
+                        duration:0,
                         complete:() => {
-                            Velocity(el, {translateX:this.getTranX(transform),translateY:'0%'}, { duration: 300,complete:done })
-                        } 
+                            Velocity(el, transform.min, { duration: 300,complete:done })
+                        }
                     })
-
+                } else {
+                    done()
+                }
             },
             afterEnter(el){
-                el.style.transition = ''
+                el.style.cssText = ''
+                el.style.transform = el.dataset['transform']
+            },  
+            elTransform(el) {
+                let transform = el.style.transform
+                let windowWidth = window.outerWidth
+                let windowHeight = window.outerHeight
+                let tranXP = Number(this.getTranX(transform).replace('%','')) / 100
+                let tranX = tranXP * aniCardWidthP * windowWidth
+                return {
+                    min:{
+                        translateX:tranX,
+                        translateY: 0  ,
+                        width:windowWidth * aniCardWidthP,
+                        height:windowHeight *  aniCardHeightP 
+                    },
+                    max:{
+                        translateX:(aniMarginP) * windowWidth,
+                        translateY: - ((1 - aniCardHeightP ) * windowHeight - aniMarginP * windowWidth)  ,
+                        width:windowWidth * aniCardToWidthP,
+                        height:windowHeight *  aniCardToHeightP 
+                    }
+                }
             },
+
             chooseCard(index){
                 this.choosenIndex = index
                 this.choosenCard = this.handCards[index]
-                this.$store.commit('deleteCard',index)
+                this.$store.commit('chooseCard',index)
             },
             cancelChoose(index,card) {
                 this.showCardDetail = false
@@ -137,7 +153,7 @@
         },
         watch:{
             handCards(){
-                let width = 25
+                let width = aniCardWidthP * 100
                 let length = this.handCards.length
                 let offset = length * width - 100
                 offset = offset > 0 ? offset / (length - 1) : offset / 2

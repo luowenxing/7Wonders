@@ -29,11 +29,7 @@ module.exports = {
             {
                 test: /\.js$/,
                 use: {
-                    loader:'babel-loader',
-                    options:{
-                        "presets": ["env"],
-                        "plugins": ["transform-object-rest-spread","transform-es2015-modules-commonjs"]
-                    }
+                    loader:'babel-loader'
                 },
                 exclude: /node_modules/
             },
