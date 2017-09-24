@@ -21,9 +21,12 @@ export default new Vuex.Store({
             store.index = info.index
             store.cards = info.cards
             store.status = info.status
+            console.log(info.cards)
+            console.log(store.status)
         },
         updateStatus(store,status) {
             store.status = status
+            console.log(store.status)
         },
         chooseCard(store,index) {
             store.status = GameStatus.NeedChoose

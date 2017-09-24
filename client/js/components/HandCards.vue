@@ -24,7 +24,8 @@
         v-if="showCardDetail" 
         :card="choosenCard" 
         :index="choosenIndex"
-        v-on:cancelChoose="cancelChoose"/>
+        v-on:cancelChoose="cancelChoose"
+        v-on:finishChoose="finishChoose"/>
     </div>
 </template>
 <script>
@@ -45,12 +46,13 @@
                 showCardDetail:false,
                 choosenIndex:0,
                 choosenCard:null,
+                choosing:false,
                 offsetStyle:[],
             }
         },
         methods:{
             beforeLeave(el){
-                el.style.transition = 'none'
+
             },
             leave(el,done){
                 let a = {...{a:1}}
@@ -60,27 +62,22 @@
                 else if(this.status === GameStatus.NextRound) {
                     let index = Number(el.dataset['index'])
                     setTimeout(() => {  
-                        Velocity(el, {rotateY:'90deg'}, { duration: 150,complete:done })
-                    },index * 100)
+                        Velocity(el, {rotateY:'90deg'}, { duration: 300,complete:done })
+                    },index * 150)
                 } else if(this.status === GameStatus.NeedChoose){
-                    let transform = this.elTransform(el)
-                    Velocity(el, transform.min,{
-                        duration:0,
-                        complete:() => {
-                            Velocity(el, transform.max, { duration: 300,complete:done })
-                        }
-                    })
+                    this.elTransform(el)
+                    setTimeout(done,300)
                 } else {
                     done()
                 }
             },
             afterLeave(el){
                 //el.style.transform = ''
-                this.showCardDetail = true
+                this.choosing = false
+                this.showCardDetail = this.status === GameStatus.NeedChoose
             },
             beforeEnter(el){
-                el.dataset['transform'] = el.style.transform
-                el.style.transition = 'none'
+
             },
             enter(el,done){
                 if(this.status === GameStatus.Start) {
@@ -89,58 +86,58 @@
                 else if(this.status === GameStatus.NextRound) {
                     let index = Number(el.dataset['index'])
                     setTimeout(() => {  
-                        Velocity(el, {rotateY:['0deg','90deg']}, { duration: 150,complete:done })
-                    },index * 100 + 150)
+                        Velocity(el, {rotateY:['0deg','90deg']}, { duration: 300,complete:done })
+                    },index * 150 + 300)
                 } else if(this.status === GameStatus.NeedChoose) {
-                    let transform = this.elTransform(el)
-                    Velocity(el, transform.max,{
-                        duration:0,
-                        complete:() => {
-                            Velocity(el, transform.min, { duration: 300,complete:done })
-                        }
-                    })
+                    el.style.transition = 'none'
+                    this.elTransform(el)
+                    setTimeout(() => {
+                        el.style.transition = ''
+                        this.elTransformClear(el)
+                        setTimeout(done,300)
+                    },0)
                 } else {
                     done()
                 }
             },
             afterEnter(el){
-                el.style.cssText = ''
-                el.style.transform = el.dataset['transform']
+
             },  
             elTransform(el) {
-                let transform = el.style.transform
                 let windowWidth = window.outerWidth
                 let windowHeight = window.outerHeight
-                let tranXP = Number(this.getTranX(transform).replace('%','')) / 100
-                let tranX = tranXP * aniCardWidthP * windowWidth
-                return {
-                    min:{
-                        translateX:tranX,
-                        translateY: 0  ,
-                        width:windowWidth * aniCardWidthP,
-                        height:windowHeight *  aniCardHeightP 
-                    },
-                    max:{
-                        translateX:(aniMarginP) * windowWidth,
-                        translateY: - ((1 - aniCardHeightP ) * windowHeight - aniMarginP * windowWidth)  ,
-                        width:windowWidth * aniCardToWidthP,
-                        height:windowHeight *  aniCardToHeightP 
+                let origniX = Number(el.style.left.replace('%','')) / 100
+                let translateX = (aniMarginP - origniX) * windowWidth
+                let translateY = - ((1 - aniCardHeightP ) * windowHeight - aniMarginP * windowWidth)
+                let width = windowWidth * aniCardToWidthP
+                let height = windowHeight *  aniCardToHeightP
+                let transform = `translateX(${translateX}px) translateY(${translateY}px)`
+                el.style.transform = transform
+                el.style.webkitTransform = transform
+                el.style.width = width + 'px'
+                el.style.height = height + 'px'
+            },
+            elTransformClear(el) {
+                el.style.transform = ''
+                el.style.width = ''
+                el.style.height = ''
+            },
+            chooseCard(index){
+                if(this.status != GameStatus.WaitForChoice) {
+                    if(!this.choosing) {
+                        this.choosenIndex = index
+                        this.choosenCard = this.handCards[index]
+                        this.$store.commit('chooseCard',index)
+                        this.choosing = true
                     }
                 }
-            },
-
-            chooseCard(index){
-                this.choosenIndex = index
-                this.choosenCard = this.handCards[index]
-                this.$store.commit('chooseCard',index)
             },
             cancelChoose(index,card) {
                 this.showCardDetail = false
                 this.$store.commit('insertCard',{index,card})
             },
-            getTranX(transform) {
-                let transXRegex = /\.*translateX\((.*?)\)/i
-                return transXRegex.exec(transform)[1];
+            finishChoose(index,card) {
+                this.showCardDetail = false
             }
         },
         computed:{
@@ -153,25 +150,21 @@
         },
         watch:{
             handCards(){
-                let width = aniCardWidthP * 100
                 let length = this.handCards.length
-                let offset = length * width - 100
+                let offset = length * aniCardWidthP - 1
                 offset = offset > 0 ? offset / (length - 1) : offset / 2
-                // 比例按照自身的比例来算，而不是父容器
-                offset = offset / width * 100
                 let arr = new Array(length)
                 arr.fill(0)
                 arr = arr.map((item,index) => {
-                    let base = index * 100
                     if(offset > 0) {
-                        return base - index * offset
+                        return (aniCardWidthP - offset) * index * 100
                     } else {
-                        return base - offset
+                        return (-offset + index * aniCardWidthP) * 100
                     }
                 })
                 this.offsetStyle = arr.map(item => {
                     return {
-                        transform:`translateX(${item}%)`
+                        left:item + '%'
                     }
                 })
             }
@@ -183,11 +176,16 @@
     }
 </script>
 <style>
-    .hand-cards>div {
+    .hand-cards {
         position:fixed;
         bottom:0;
         width:100%;
         height:20%;
+    }
+    .hand-cards>div {
+        width:100%;
+        height:100%;
+        position:relative;
     }
     .hand-cards .hand-card {
         width:25%;

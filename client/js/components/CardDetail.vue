@@ -20,10 +20,13 @@
             }
         },
 		methods:{
-			choose() {
+			choose(e) {
+                e.stopPropagation()
 				this.socket.choose({
                     index:this.index,
                     action:ChoiceAction.Build
+                }, () => {
+                    this.$emit('finishChoose',this.index,this.card)
                 })
 			},
 			cancelChoose() {
