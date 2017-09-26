@@ -62,7 +62,8 @@
                 else if(this.status === GameStatus.NextRound) {
                     let index = Number(el.dataset['index'])
                     setTimeout(() => {  
-                        Velocity(el, {rotateY:'90deg'}, { duration: 300,complete:done })
+                        el.style.transform = 'rotateY(90deg)'
+                        setTimeout(done,300)
                     },index * 150)
                 } else if(this.status === GameStatus.NeedChoose){
                     this.elTransform(el)
@@ -85,8 +86,14 @@
                 }
                 else if(this.status === GameStatus.NextRound) {
                     let index = Number(el.dataset['index'])
-                    setTimeout(() => {  
-                        Velocity(el, {rotateY:['0deg','90deg']}, { duration: 300,complete:done })
+                    el.style.transition = 'none'
+                    el.style.transform = 'rotateY(90deg)'
+                    setTimeout(() => { 
+                        setTimeout(() => {
+                            el.style.transition = ''
+                            el.style.transform = ''
+                            setTimeout(done,300)
+                        },0)
                     },index * 150 + 300)
                 } else if(this.status === GameStatus.NeedChoose) {
                     el.style.transition = 'none'
@@ -104,14 +111,14 @@
 
             },  
             elTransform(el) {
-                let windowWidth = window.outerWidth
-                let windowHeight = window.outerHeight
+                let windowWidth = window.innerWidth
+                let windowHeight = window.innerHeight
                 let origniX = Number(el.style.left.replace('%','')) / 100
                 let translateX = (aniMarginP - origniX) * windowWidth
                 let translateY = - ((1 - aniCardHeightP ) * windowHeight - aniMarginP * windowWidth)
                 let width = windowWidth * aniCardToWidthP
                 let height = windowHeight *  aniCardToHeightP
-                let transform = `translateX(${translateX}px) translateY(${translateY}px)`
+                let transform = `translateX(${translateX}px) translateY(${translateY}px) translateZ(0)`
                 el.style.transform = transform
                 el.style.webkitTransform = transform
                 el.style.width = width + 'px'

@@ -48,7 +48,7 @@ class Game {
             let card = cards[chooseIndex]
             switch(choice.action) {
                 case ChoiceAction.Build:
-                    if(this.canBuild(index,card)){
+                    if(this.canBuild(index,card,choice)){
                         cards.splice(chooseIndex,1)
                         player.build(card)
                     } else {
@@ -86,7 +86,7 @@ class Game {
             }
         }
     }
-    canBuild(index,card){
+    canBuild(index,card,choice){
         let player = this.players[index]
         if(player.cardsName[card.name]) {
             // 同名建筑

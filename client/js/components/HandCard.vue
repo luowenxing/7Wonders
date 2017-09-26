@@ -38,6 +38,7 @@
         top:0;
         left:0;
         transition:all 300ms;
+        transform:translateZ(0);
     }
     .hand-card .card {
         height:100%;
