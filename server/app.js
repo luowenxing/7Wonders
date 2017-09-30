@@ -5,7 +5,7 @@ let router = express.Router();
 let app = express();
 let server = require('http').Server(app);
 let Game = require('./game.js')
-let { GameStatus } = require('./util/consts.js')
+let { GameStatus,IOEvent } = require('./util/consts.js')
 app.use(express.static(path.resolve(__dirname,'../client')));
 server.listen(8888,function() {
     console.log('server started')
@@ -27,15 +27,15 @@ sio.on('connection',function(socket) {
             playersCount:clients.length
         })
         clients.forEach( (client,index) => {
-            client.emit('newGame',game.getNextRoundInfo(index))
+            client.emit(IOEvent.Update,game.getGameInfo(index))
         }) 
     }
 
-    socket.on('choose',function(choice){
+    socket.on(IOEvent.Choose,function(choice){
         console.log('player choose')
         let result = game.shouldChoose(socket.index,choice)
         let success = result.success
-        socket.emit('chooseResult',{
+        socket.emit(IOEvent.Choose,{
             success,
             status:success ? game.status : GameStatus.NeedChoose
         })
@@ -45,12 +45,12 @@ sio.on('connection',function(socket) {
                 // 是否所有人选择完毕，进入下一轮
                 case GameStatus.NextRound:
                     clients.forEach( (client,index) => {
-                        client.emit('nextRound',game.getNextRoundInfo(index))
+                        client.emit(IOEvent.Update,game.getGameInfo(index))
                     }) 
                     break
                 case GameStatus.NextAge:
                     clients.forEach( (client,index) => {
-                        client.emit('nextAge',game.getNextRoundInfo(index))
+                        client.emit(IOEvent.Update,game.getGameInfo(index))
                     }) 
                     break
             }

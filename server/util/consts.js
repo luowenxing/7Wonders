@@ -53,6 +53,11 @@ var ChoiceAction = {
     BuildWonder:'BuildWonder'
 }
 
+var IOEvent = {
+    Update:'Update',
+    Choose:'Choose'
+}
+
 module.exports = {
     Resource,
     Color,

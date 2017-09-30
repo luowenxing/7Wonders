@@ -21,7 +21,7 @@ class Game {
     get allChoosed(){
         return this.choosed.reduce( (item,sum) => (sum && item),true)
     }
-    getNextRoundInfo(index){
+    getGameInfo(index){
         return {
             players:this.players,
             index:index,
@@ -36,7 +36,10 @@ class Game {
         return this.cards[this.age][currIndex]
     }
     shouldChoose(index,choice){
-        let success = true
+        let result = {
+            success:false,
+            message:
+        }
         let choosed = this.choosed[index]
         if(choosed) {
             success = false
@@ -49,6 +52,7 @@ class Game {
             switch(choice.action) {
                 case ChoiceAction.Build:
                     if(this.canBuild(index,card,choice)){
+                        this.choosed[index] = true
                         cards.splice(chooseIndex,1)
                         player.build(card)
                     } else {
@@ -71,8 +75,7 @@ class Game {
         }
         return {success}
     }
-    shouldNextRound(index) {
-        this.choosed[index] = true
+    shouldNextRound() {
         if(this.allChoosed) {
             this.choosed.fill(false)
             this.round ++
@@ -88,10 +91,15 @@ class Game {
     }
     canBuild(index,card,choice){
         let player = this.players[index]
+        let result = {
+            success
+        }
         if(player.cardsName[card.name]) {
             // 同名建筑
+            return false
         } else {
              if(player.freeBuilds[card.name]) {
+                return true
             // 免费建设链
             } else {
 
