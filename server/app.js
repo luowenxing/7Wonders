@@ -16,12 +16,12 @@ let clients = []
 let game
 
 sio.on('connection',function(socket) {
-    console.log('player in')
-    if(clients.filter( x => socket.id === x.id ).length == 0) {
+    if(clients.filter( x => socket.request.headers.cookie === x.request.headers.cookie ).length == 0) {
         socket.index = clients.length
         clients.push(socket)
+        console.log('player in ' + socket.request.headers.cookie)
     }
-    if(clients.length === 4) {
+    if(clients.length === 3) {
         console.log('new game')
         game = new Game({
             playersCount:clients.length
@@ -32,30 +32,15 @@ sio.on('connection',function(socket) {
     }
 
     socket.on(IOEvent.Choose,function(choice){
-        console.log('player choose')
         let result = game.shouldChoose(socket.index,choice)
-        let success = result.success
-        socket.emit(IOEvent.Choose,{
-            success,
-            status:success ? game.status : GameStatus.NeedChoose
-        })
-        if(success) {
-            game.shouldNextRound(socket.index)
-            switch(game.status) {
-                // 是否所有人选择完毕，进入下一轮
-                case GameStatus.NextRound:
-                    clients.forEach( (client,index) => {
-                        client.emit(IOEvent.Update,game.getGameInfo(index))
-                    }) 
-                    break
-                case GameStatus.NextAge:
-                    clients.forEach( (client,index) => {
-                        client.emit(IOEvent.Update,game.getGameInfo(index))
-                    }) 
-                    break
-            }
+        // 返回选择结果
+        socket.emit(IOEvent.Choose,result)
+        // 是否广播进入下一轮
+        if(game.shouldNextRound(socket.index)) {
+            clients.forEach( (client,index) => {
+                client.emit(IOEvent.Update,game.getGameInfo(index))
+            }) 
         }
-
     })
     socket.on('disconnect',function(){
         var index = clients.indexOf(socket)

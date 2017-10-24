@@ -50,3 +50,16 @@ exports.divide = function(arr,parts) {
     }
     return results
 }
+
+
+exports.cartesianProductOf = function() {
+    return Array.prototype.reduce.call(arguments,(a, b) => {
+        var ret = [];
+        a.forEach( a => {
+            b.forEach( b =>{
+                ret.push(a.concat([b]));
+            });
+        });
+        return ret;
+    }, [[]]);
+}

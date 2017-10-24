@@ -1,11 +1,15 @@
 <template>
     <div class="hand-card">
         <div :style="handCardStyle" class="card">
-            {{ card.name }}
+            <div> {{ card.name }} </div>
+            <div v-for="res in cardCost">
+                {{  res.name + " X " + res.cost }}
+            </div>
         </div>
     </div>
 </template>
 <script>
+    import { getCardCost } from '../lib/CardHelper.js'
     export default {
         props:{
             card:{
@@ -22,6 +26,9 @@
                 return {
                     backgroundColor:this.card.color
                 }
+            },
+            cardCost() {
+                return getCardCost(this.card)
             }
         }
     }

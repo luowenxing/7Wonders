@@ -2,7 +2,7 @@ var Resource = {
     Wood:'Wood',
     Brick:'Brick',
     Stone:'Stone',
-    Mineral:'Mineral ',
+    Mineral:'Mineral',
     Cloth:'Cloth',
     Glass:'Glass',
     Paper:'Paper'
@@ -65,5 +65,6 @@ module.exports = {
     Technic,
     Indicators,
     GameStatus,
-    ChoiceAction
+    ChoiceAction,
+    IOEvent
 }

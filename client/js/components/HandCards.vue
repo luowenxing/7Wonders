@@ -67,15 +67,18 @@
                     },index * 150)
                 } else if(this.status === GameStatus.NeedChoose){
                     this.elTransform(el)
-                    setTimeout(done,300)
+                    setTimeout(() => {
+                        this.showCardDetail = true
+                        this.choosing = false
+                        done()
+                    },300)
                 } else {
                     done()
                 }
             },
             afterLeave(el){
                 //el.style.transform = ''
-                this.choosing = false
-                this.showCardDetail = this.status === GameStatus.NeedChoose
+                
             },
             beforeEnter(el){
 

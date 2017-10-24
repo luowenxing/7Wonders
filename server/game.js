@@ -12,6 +12,10 @@ class Game {
         for(let i=0;i<this.playersCount;i++) {
             this.players.push(new Player())
         }
+        this.players.forEach( (player,index) => {
+            player.leftPlayer = this.leftPlayer(index)
+            player.rightPlayer = this.rightPlayer(index)
+        })
         this.cards = dividedCards(this.playersCount)
         this.round = 0
         let choosed = new Array(this.playersCount)
@@ -19,15 +23,32 @@ class Game {
         this.choosed = choosed
     }
     get allChoosed(){
-        return this.choosed.reduce( (item,sum) => (sum && item),true)
+        return this.choosed.reduce( (sum,item) => (sum && item),true)
+    }
+    leftPlayer(index){
+        let count = this.playersCount
+        return this.players[(index - 1 + count ) % count]
+    }
+    rightPlayer(index){
+        let count = this.playersCount
+        return this.players[(index + 1) % count]
     }
     getGameInfo(index){
         return {
-            players:this.players,
+            players:this.getPlayerInfo(index),
             index:index,
             cards:this.getCardsOfPlayer(index),
             status:this.status
         }
+    }
+    getPlayerInfo(index) {
+        return this.players.map((player,curIndex) => {
+            if(index === curIndex) {
+                return player.privateInfo
+            } else {
+                return player.publicInfo
+            }
+        })
     }
     getCardsOfPlayer(index){
         let step = this.age %2 === 0 ? -this.round : this.round
@@ -37,13 +58,11 @@ class Game {
     }
     shouldChoose(index,choice){
         let result = {
-            success:false,
-            message:
+            success:true,
+            message:'',
         }
         let choosed = this.choosed[index]
-        if(choosed) {
-            success = false
-        } else {
+        if(!choosed) {
             this.status = GameStatus.WaitForChoice
             let player = this.players[index]
             let cards = this.getCardsOfPlayer(index)
@@ -56,7 +75,7 @@ class Game {
                         cards.splice(chooseIndex,1)
                         player.build(card)
                     } else {
-                        success = false
+                        result.success = false
                     }
                     break
                 case ChoiceAction.Discard:
@@ -68,12 +87,14 @@ class Game {
                         cards.splice(chooseIndex,1)
                         player.buildWonder(card)
                     }else {
-                        success = false
+                        result.success = false
                     }
                     break
             }
+        } else {
+            result.success = false
         }
-        return {success}
+        return result
     }
     shouldNextRound() {
         if(this.allChoosed) {
@@ -87,25 +108,13 @@ class Game {
             } else {
                 this.status = GameStatus.NextRound
             }
+            return true
         }
+        return false
     }
     canBuild(index,card,choice){
         let player = this.players[index]
-        let result = {
-            success
-        }
-        if(player.cardsName[card.name]) {
-            // 同名建筑
-            return false
-        } else {
-             if(player.freeBuilds[card.name]) {
-                return true
-            // 免费建设链
-            } else {
-
-            }
-        }
-        return true
+        return player.canBuild(card,choice)
     }
     canBuildWonder(index) {
         let player = this.players[index]

@@ -1,19 +1,13 @@
 
 var {
-    Resource,
     Color,
     Directions,
     Technic,
     Indicators
 } = require('../util/consts.js')
-
 var {sum} = require('../util/util.js')
-
-var defaultRes = {...Resource}
-for(var x in defaultRes) {
-    defaultRes[x] = 0
-}
-var uuidv4 = require('uuid/v4');
+var uuidv4 = require('uuid/v4')
+var Resources = require('./Resources.js')
 
 class BaseCard {
     constructor(options) {
@@ -24,10 +18,7 @@ class BaseCard {
         this.age = options.age
         this.basements = options.basements || []
         this.freeBuilds = options.freeBuilds || []
-        this.costs = {
-            ...defaultRes,
-            ...options.costs || {},
-        }
+        this.costs = new Resources(options.costs)
     }
     caculateScore() {
         return 0
@@ -40,10 +31,10 @@ var IndicatorCardMixin = Base => class extends Base {
         this.directions = options.directions || []
         this.indicatorNames = options.indicatorNames || []
     }
-    caculate(indicators,multiple) {
+    caculate(players,multiple) {
         return sum(this.directions.map((direction) => {
             return sum(this.indicatorNames.map(indicatorName => {
-                return indicators[direction][this.indicatorName] * multiple
+                return players[direction][this.indicatorName] * multiple
             }))
         }))
     }
@@ -52,8 +43,8 @@ var IndicatorCardMixin = Base => class extends Base {
 class ResourceCard extends BaseCard {
     constructor(options) {
         super(options)
-        this.res = options.res || []
-        this.orRes = options.orRes || []
+        this.res = options.res && new Resources(options.res)
+        this.orRes = options.orRes && new Resources(options.orRes)
         this.costMoney = options.costMoney || 0
     }
 }
@@ -76,10 +67,8 @@ class TradeCard extends BaseCard {
 class TradeResOwnCard extends TradeCard {
     constructor(options) {
         super(options)
-        this.orRes = {
-            ...defaultRes,
-            ...options.orRes || {},
-        }
+        this.res = new Resources(options.res)
+        this.orRes = new Resources(options.orRes)
     }
 }
 
@@ -156,5 +145,5 @@ module.exports = {
     TradeResOwnCard,
     TradeResCard,
     TradeCard,
-    ResourceCard
+    ResourceCard,
 }

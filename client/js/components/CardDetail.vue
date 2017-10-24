@@ -7,7 +7,7 @@
 </template>
 <script>
 	import HandCard from './HandCard.vue'
-	import { ChoiceAction } from 'shared/util/consts'
+	import { ChoiceAction,GameStatus } from 'shared/util/consts'
 	export default {
 		props:{
             card:{
@@ -25,8 +25,11 @@
 				this.socket.choose({
                     index:this.index,
                     action:ChoiceAction.Build
-                }, () => {
-                    this.$emit('finishChoose',this.index,this.card)
+                }, (result) => {
+                	if(result.success) {
+                		this.$store.commit('updateStatus',GameStatus.WaitForChoice)
+                		this.$emit('finishChoose',this.index,this.card)
+                	}
                 })
 			},
 			cancelChoose() {

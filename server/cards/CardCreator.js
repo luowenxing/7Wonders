@@ -9,7 +9,7 @@ var {
     TradeResOwnCard,
     TradeCard,
     ResourceCard
-} = require('./card.js')
+} = require('./Card.js')
 
 var {
     Resource,
@@ -208,6 +208,16 @@ var Purple = [{
         directions:[Directions.Middle],
         indicatorNames:[Indicators.Brown,Indicators.Grey,Indicators.Purple],
         scoreMul:1,
+    },{
+        name:'SCIENTISTS GUILD',
+        costs:{
+            [Resource.Wood]:2,
+            [Resource.Mineral]:2,
+            [Resource.Paper]:1,
+        },
+        directions:[Directions.Middle],
+        indicatorNames:[Indicators.Medicine,Indicators.Industry,Indicators.Education],
+        scoreMul:0,
     },{
         name:'MAGISTRATES GUILD',
         costs:{

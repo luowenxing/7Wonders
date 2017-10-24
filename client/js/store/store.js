@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import { GameStatus } from 'shared/util/consts'
+import getters from './getters.js'
 Vue.use(Vuex)
 
 export default new Vuex.Store({
@@ -10,11 +11,7 @@ export default new Vuex.Store({
         cards:[],
         status:0
     },
-    getters: {
-        currentPlayer(state){
-            return state.players[state.index]
-        }
-    },
+    getters,
     mutations:{
         updateGame(store,info){
             store.players = info.players
