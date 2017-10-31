@@ -63,3 +63,19 @@ exports.cartesianProductOf = function() {
         return ret;
     }, [[]]);
 }
+
+exports.distinct = function(arr,condition) {
+    let result = []
+    arr.forEach(item1 => {
+        if(result.findIndex(item2 => condition(item1,item2)) < 0) {
+            result.push(item1)
+        }
+    })
+    return result
+}
+
+exports.extend = function(a,b) {
+    Object.keys(b).forEach(key => {
+        a[key] = b[key]
+    })
+}

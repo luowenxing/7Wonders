@@ -67,8 +67,8 @@ class TradeCard extends BaseCard {
 class TradeResOwnCard extends TradeCard {
     constructor(options) {
         super(options)
-        this.res = new Resources(options.res)
-        this.orRes = new Resources(options.orRes)
+        this.res = options.res && new Resources(options.res)
+        this.orRes = options.orRes && new Resources(options.orRes)
     }
 }
 

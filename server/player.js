@@ -1,7 +1,7 @@
 
 var { Color } = require('./util/consts.js')
 var Resources = require('./cards/Resources.js')
-var { cartesianProductOf } = require('./util/util.js')
+var { flatten } = require('./util/util.js')
 var {
     InfrastructureCard,
     GuildCard,
@@ -17,22 +17,51 @@ var {
 class Player {
     constructor(options) {
         // 初始化卡牌
-        this.cards = {...Color}
-        Object.keys(this.cards).forEach( key => this.cards[key] = [])
-        this.money = 3
-        this.freeBuilds = []
-        this.cardsName = []
-        this.ownRes = {
-            res:new Resources(),
-            orRes:[]
+        if(options) {
+            this.cards = options.cards
+            this.money = options.money
+        } else {
+            this.cards = {...Color}
+            Object.keys(this.cards).forEach( key => this.cards[key] = [])
+            this.money = 3
         }
-        this.sellRes = {
-            res:new Resources(),
-            orRes:[]
-        }   
-        this.leftPlayer = undefined
-        this.rightPlayer = undefined
         // TODO:Indicator指示器
+    }
+    get allCards() {
+        return flatten(Object.keys(this.cards).map(key => this.cards[key]))
+    }
+    get freeBuilds() {
+        return this.allCards.reduce((sum,card) => sum.concat(card.freeBuilds),[])
+    }
+    get cardsName(){
+        return this.allCards.reduce((sum,card) => sum.concat(card.name),[])
+    }
+    get ownRes(){
+        let res = []
+        let orRes = []
+        this.allCards.forEach(card => {
+            card.res && res.push(card.res)
+            card.orRes && orRes.push(card.orRes)
+        })
+        return {
+            res:Resources.sum(res),
+            orRes
+        }
+    }
+    get sellRes(){
+        let res = []
+        let orRes = []
+        this.allCards.forEach(card => {
+            // 只能出售资源牌，贸易牌提供的不能出售
+            if(card.color === Color.Brown || card.color === Color.Grey) {
+                card.res && res.push(card.res)
+                card.orRes && orRes.push(card.orRes)
+            }
+        })
+        return {
+            res:Resources.sum(res),
+            orRes
+        }
     }
     get publicInfo(){
         return {
@@ -49,27 +78,6 @@ class Player {
     }
     build(card) {
         this.cards[card.color].push(card)
-        this.freeBuilds = this.freeBuilds.concat(card.freeBuilds)
-        this.cardsName.push(card.name)
-        if(card instanceof ResourceCard) {
-            // 资源牌，增加可出售资源
-            if(card.res) {
-                this.sellRes.res = this.sellRes.res.plus(card.res)
-            }
-            if(card.orRes) {
-                this.sellRes.orRes.push(card.orRes)
-            }
-        }
-        if(card instanceof ResourceCard || card instanceof TradeResOwnCard) {
-            // 资源牌或者贸易资源牌，增加自己的资源
-            if(card.res) {
-                this.ownRes.res = this.ownRes.res.plus(card.res)
-            }
-            if(card.orRes) {
-                this.ownRes.orRes.push(card.orRes)
-            }
-        } 
-
     }
     canBuild(card,choice) {
         if(this.cardsName[card.name]) {
@@ -81,45 +89,31 @@ class Player {
                 return true
             } else {
                 let costMoney = 0
+                let cardCostMoney = card.costMoney || 0
                 let trade = choice.trade
                 let tradeResSum = new Resources()
-                if(trade) { // 验证交易
-                    if(trade.left) {
-                        let tradeRes = new Resources(trade.left)
-                        let leftTrade = this.caculateTrade(tradeRes,this.leftPlayer)
-                        if(leftTrade) {
-                            costMoney += leftTrade
-                            tradeResSum = tradeResSum.plus(tradeRes)
-                        } else {
-                            // 交易验证失败
-                            return false
-                        }
-                    }
-                    if(trade.right) {
-                        let tradeRes = new Resources(trade.right)
-                        let rightTrade = this.caculateTrade(tradeRes,this.rightPlayer)
-                        if(rightTrade) {
-                            costMoney += rightTrade
-                            tradeResSum = tradeResSum.plus(tradeRes)
-                        } else {
-                            // 交易验证失败
-                            return false
-                        }
+                if(trade instanceof Array && trade.length === 2) {
+                    trade[0].player = this.leftPlayer
+                    trade[1].player = this.rightPlayer
+                    trade.forEach(t => t.res = new Resources(t.res))
+                    let result = this.canTrade(trade)
+                    if(result.success) {
+                        costMoney = result.costMoney
+                        tradeResSum = Resources.sum(result.trades.map(trade => trade.res))
                     }
                 }
-                if(this.money < costMoney) { // 不够钱
+
+                if(this.money < (costMoney + cardCostMoney)) { // 不够钱
                     return false
                 }
                 // 增加了购买的资源
+                let ownRes = this.ownRes
                 let nowRes = {
-                    res:this.ownRes.res.plus(tradeResSum),
-                    orRes:this.ownRes.orRes
+                    res:ownRes.res.plus(tradeResSum),
+                    orRes:ownRes.orRes
                 }
-                if(this.hasRes(nowRes,card.costs)) {
-                    if(typeof card.costMoney === 'number') {
-                        this.money -= card.costMoney
-                    }
-                    this.money -= costMoney
+                if(Resources.hasRes(nowRes,card.costs).result) {
+                    this.money -= (costMoney + cardCostMoney)
                     return true
                 } else {
                     return false // 资源不够
@@ -136,38 +130,40 @@ class Player {
     discard(){
         this.money += 3
     }
-    hasRes(resObj,needRes) {
-        let res = resObj.res
-        let restRes = res.mines(needRes)
-        if(restRes.isEnough) {
-            // 自有资源满足
-            return true
-        } else {
-            // 检查Or资源
-            let orRes = resObj.orRes
-            // 取笛卡尔积 可优化
-            let cartesian = cartesianProductOf.apply(null,orRes.map(resObj => {
-                let res = resObj.res
-                let resKeys = Object.keys(res).filter(key => res[key] > 0)
-                return resKeys.map(key => {
-                    return new Resources({
-                        [key]:res[key]
-                    })
-                })
-            }))
-            let avaliableRes = cartesian.map(resArr => Resources.sum(resArr))
-            return avaliableRes.reduce((result,res) => {
-                // 只需满足笛卡尔积中的一种情况就行
-                return result || res.plus(restRes).isEnough
-            },false)
+
+    canTrade(trades) {
+        let result = trades.reduce((result,trade) => {
+            if(result.success) { // 任何一个失败代表交易不可行
+                let res = trade.res
+                let player = trade.player
+                let costMoney = this.caculateTrade(res,player)
+                if(costMoney >= 0) {
+                    trade.costMoney = costMoney
+                    result.trades.push(trade)
+                } else {
+                    // 交易验证失败，没有这么多资源
+                    result.success = false
+                }
+            }
+            return result
+        },{success:true,trades:[]})
+        if(result.success) {
+            // 钱够不够
+            let costMoney = trades.reduce((sum,trade) => sum + (trade.costMoney || 0),0)
+            result.success = this.money >= costMoney
+            if(result.success) {
+                result.costMoney = costMoney
+            }
         }
+        return result
     }
+
     caculateTrade(tradeRes,toPlayer){
-        if(toPlayer.hasRes(toPlayer.sellRes,tradeRes)) {
+        if(Resources.hasRes(toPlayer.sellRes,tradeRes).result) {
             // 计算花费，TODO:考虑Trade贸易卡
             return tradeRes.wealth * 2
         } else {
-            return false
+            return -1
         }
     }
 }

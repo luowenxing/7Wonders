@@ -68,10 +68,13 @@
                 } else if(this.status === GameStatus.NeedChoose){
                     this.elTransform(el)
                     setTimeout(() => {
-                        this.showCardDetail = true
-                        this.choosing = false
+                        
                         done()
                     },300)
+                    setTimeout(() => {
+                        this.showCardDetail = true
+                        this.choosing = false
+                    },280)
                 } else {
                     done()
                 }

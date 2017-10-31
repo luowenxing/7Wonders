@@ -1,13 +1,15 @@
 <template>
     <div class="modal" @click="cancelChoose">
         <div class="card-detail-container">
-        	<HandCard :card="card" :index="index" @click.native="choose" />
+        	<HandCard :card="card" :index="index"/>
+        	<CardAction :card="card" :index="index" 
+        	v-on:finishChoose="finishChoose"/>
         </div>
     </div>
 </template>
 <script>
 	import HandCard from './HandCard.vue'
-	import { ChoiceAction,GameStatus } from 'shared/util/consts'
+	import CardAction from './CardAction.vue'
 	export default {
 		props:{
             card:{
@@ -19,25 +21,17 @@
                 required:true
             }
         },
-		methods:{
-			choose(e) {
-                e.stopPropagation()
-				this.socket.choose({
-                    index:this.index,
-                    action:ChoiceAction.Build
-                }, (result) => {
-                	if(result.success) {
-                		this.$store.commit('updateStatus',GameStatus.WaitForChoice)
-                		this.$emit('finishChoose',this.index,this.card)
-                	}
-                })
-			},
-			cancelChoose() {
+        methods:{
+        	cancelChoose() {
 				this.$emit('cancelChoose',this.index,this.card)
+			},
+			finishChoose() {
+				this.$emit('finishChoose')
 			}
-		},
+        },
 		components:{
-			HandCard
+			HandCard,
+			CardAction
 		}
 	}
 </script>
@@ -56,6 +50,5 @@
 		margin-top:20%;
 		position: relative;
 	}
-
 
 </style>

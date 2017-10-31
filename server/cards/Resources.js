@@ -1,5 +1,6 @@
 
 const { Resource } = require('../util/consts.js')
+const { cartesianProductOf,extend } = require('../util/util.js')
 const keys = Object.keys(Resource)
 const brownKeys = [Resource.Wood,Resource.Brick,Resource.Stone,Resource.Mineral]
 const greyKeys = [Resource.Cloth,Resource.Glass,Resource.Paper]
@@ -12,9 +13,9 @@ Object.keys(Resource).forEach((key) => {
 function operate(op) {
 	return function(other) {
 		let sum = new Resources()
-		let isNumber = !(other instanceof Resources)
+		let isNumber = typeof other === 'number'
 		keys.forEach(key => {
-			sum.res[key] = op(this.res[key],isNumber ? other : other.res[key])
+			sum[key] = op(this[key],isNumber ? other : other[key])
 		})
 		return sum
 	}
@@ -22,20 +23,43 @@ function operate(op) {
 
 class Resources {
 	constructor(res) {
-		this.res = {
+		extend(this,{
 			...defaultRes,
 			...res || {}
-		}
+		})
 	}
 	get isEnough(){
 		return keys.reduce((sum,key) => {
-			return sum && this.res[key] >= 0
+			return sum && this[key] >= 0
+		},true)
+	}
+	get isEmpty(){
+		return keys.reduce((sum,key) => {
+			return sum && this[key] == 0
 		},true)
 	}
 	get wealth(){
-		keys.reduce((sum,key) => {
-			return sum + this.res[key]
+		return keys.reduce((sum,key) => {
+			return sum + this[key]
 		},0)
+	}
+	get diff() {
+		let result = new Resources()
+		keys.forEach(key => {
+			let count = this[key]
+			if(count < 0) {
+				result[key] = -this[key]
+			}
+		})
+		return result
+	}
+	equals(res2) {
+		return keys.reduce((result,key) => {
+			return result && this[key] === res2[key]
+		},true)
+	}
+	mapPositive(op) {
+		return keys.filter(key => this[key] > 0).map(op)
 	}
 }
 
@@ -43,6 +67,33 @@ Resources.sum = function(arr) {
 	return arr.reduce((total,res) => {
 		return total.plus(res)
 	},new Resources()) 
+}
+
+Resources.hasRes = function(resObj,needRes) {
+	let res = resObj.res
+    let restRes = res.mines(needRes)
+    if(restRes.isEnough) {
+        // 自有资源满足
+        return {result:true}
+    } else {
+        // 检查Or资源
+        let orRes = resObj.orRes
+        // 取笛卡尔积 可优化
+        let cartesian = cartesianProductOf.apply(null,orRes.map(res => {
+            let resKeys = keys.filter(key => res[key] > 0)
+            return resKeys.map(key => {
+                return new Resources({
+                    [key]:res[key]
+                })
+            })
+        }))
+        let avaliableRes = cartesian.map(resArr => Resources.sum(resArr))
+        let resArr = avaliableRes.map(res => res.plus(restRes))
+        return {
+            resArr,
+            result:resArr.reduce((sum,res) => sum || res.isEnough,false),
+        }
+    }
 }
 
 Resources.prototype.plus = operate((a,b) => a + b)

@@ -27,6 +27,7 @@ sio.on('connection',function(socket) {
             playersCount:clients.length
         })
         clients.forEach( (client,index) => {
+            client.index = index
             client.emit(IOEvent.Update,game.getGameInfo(index))
         }) 
     }
@@ -45,6 +46,7 @@ sio.on('connection',function(socket) {
     socket.on('disconnect',function(){
         var index = clients.indexOf(socket)
         clients.splice(index,1)
+        console.log('player off')
     })
 })
 

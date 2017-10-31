@@ -558,7 +558,7 @@ var Grey = flatten([
             name:'GLASSWORKS',
             res:{[Resource.Glass]:1},
         },{
-            name:'LOOM',
+            name:'PRESS',
             res:{[Resource.Paper]:1},
         }].map( options => 
             new ResourceCard({
@@ -577,7 +577,7 @@ var Grey = flatten([
             name:'GLASSWORKS',
             res:{[Resource.Glass]:1},
         },{
-            name:'LOOM',
+            name:'PRESS',
             res:{[Resource.Paper]:1},
         }].map( options => 
             new ResourceCard({

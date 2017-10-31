@@ -2,14 +2,14 @@
     <div class="hand-card">
         <div :style="handCardStyle" class="card">
             <div> {{ card.name }} </div>
-            <div v-for="res in cardCost">
-                {{  res.name + " X " + res.cost }}
+            <div v-for="res in cardCost" class="card-cost">
+                <img :src="require('../../assets/images/' + res + '.png')"  alt="" />
             </div>
         </div>
     </div>
 </template>
 <script>
-    import { getCardCost } from '../lib/CardHelper.js'
+    import { getResInArr } from '../lib/CardHelper.js'
     export default {
         props:{
             card:{
@@ -28,7 +28,8 @@
                 }
             },
             cardCost() {
-                return getCardCost(this.card)
+                let card = this.card
+                return getResInArr(card.costs)
             }
         }
     }
@@ -53,6 +54,14 @@
         background-color: #fff;
         overflow: hidden;
         box-shadow: 0 2px 4px 0 black, 0 0 6px 0 black;
+    }
+    .hand-card .card .card-cost {
+        display: flex;
+        flex-direction: column;
+    }
+    .hand-card .card .card-cost img {
+        width:20%;
+        flex:auto;
     }
 
 </style>
