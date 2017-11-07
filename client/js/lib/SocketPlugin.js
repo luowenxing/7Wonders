@@ -6,7 +6,7 @@ import { IOEvent } from 'shared/util/consts'
 
 class GameSocket {
     constructor(store){
-        var socket = io("http://192.168.0.107:8888")
+        var socket = io("http://localhost:8888")
         socket.on(IOEvent.Choose, result => {
             var callback = this.callbacks[IOEvent.Choose]
             callback && callback(result)

@@ -130,6 +130,7 @@ var Brown = [
         [3,4].map( minPlayers => 
             new ResourceCard({
                 age:2, 
+                costMoney:1,
                 color:Color.Brown,
                 minPlayers,
                 ...options

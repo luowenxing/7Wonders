@@ -2,6 +2,7 @@
     <div>
         <div class="hand-cards" >
             <transition-group 
+            class="hand-cards-container"
             tag="div" 
             v-on:leave="leave"
             v-on:before-leave="beforeLeave"
@@ -15,6 +16,7 @@
                 :key="handCard.uuid"
                 :card="handCard" 
                 :index="index" 
+                :type="'hand-card'"
                 :style="offsetStyle[index]"
                 :data-index="index"
                 @click.native="chooseCard(index)"/>
@@ -117,7 +119,7 @@
 
             },  
             elTransform(el) {
-                let windowWidth = window.innerWidth
+                let windowWidth = this.$el.querySelector('.hand-cards-container').offsetWidth
                 let windowHeight = window.innerHeight
                 let origniX = Number(el.style.left.replace('%','')) / 100
                 let translateX = (aniMarginP - origniX) * windowWidth
@@ -125,6 +127,7 @@
                 let width = windowWidth * aniCardToWidthP
                 let height = windowHeight *  aniCardToHeightP
                 let transform = `translateX(${translateX}px) translateY(${translateY}px) translateZ(0)`
+                el.style.padding = '0px'
                 el.style.transform = transform
                 el.style.webkitTransform = transform
                 el.style.width = width + 'px'
@@ -134,6 +137,7 @@
                 el.style.transform = ''
                 el.style.width = ''
                 el.style.height = ''
+                el.style.padding = ''
             },
             chooseCard(index){
                 if(this.status != GameStatus.WaitForChoice) {
@@ -201,7 +205,14 @@
         position:relative;
     }
     .hand-cards .hand-card {
+        padding:4px;
         width:25%;
+        position:absolute;
+        top:0;
+        left:0;
+        transition:all 300ms;
+        transform:translateZ(0);
+        font-size:10px;
     }
 
 </style>

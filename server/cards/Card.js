@@ -76,7 +76,7 @@ class TradeResCard extends TradeCard {
     constructor(options) {
         super(options)
         this.directions = options.directions || []
-        this.buyRes = options.buyRes
+        this.buyRes = options.buyRes 
     }
 }
 

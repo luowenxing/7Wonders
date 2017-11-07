@@ -31,6 +31,8 @@ var Technic = {
 }
 
 var Indicators = {
+    Money:'Money',
+    Score:'Score',
     Wonders:'Wonders',
     Lose:'Lose',
     Arms:'Arms',
@@ -58,6 +60,13 @@ var IOEvent = {
     Choose:'Choose'
 }
 
+var WonderAbility = {
+    BuildFree:'BuildFree',
+    DiscardFree:'DiscardFree',
+    NoDiscard:'NoDiscard',
+    CopyGuild:'CopyGuild',
+}
+
 module.exports = {
     Resource,
     Color,
@@ -66,5 +75,6 @@ module.exports = {
     Indicators,
     GameStatus,
     ChoiceAction,
-    IOEvent
+    IOEvent,
+    WonderAbility
 }

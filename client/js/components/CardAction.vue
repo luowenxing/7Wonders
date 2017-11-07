@@ -10,7 +10,7 @@
     			v-bind:class="{'disabled':!canBuildCard}"
     			@click="buildCard">建造</div>
     		<div class="card-action card-action-wonder">奇迹</div>
-    		<div class="card-action card-action-discard">丢弃</div>
+    		<div class="card-action card-action-discard" @click="discardCard">丢弃</div>
     	</div>
 	</div>
 </template>
@@ -54,6 +54,11 @@
                 		this.choose()
                 	}
                 }
+			},
+			discardCard(e) {
+				e.stopPropagation()
+				this.action = ChoiceAction.Discard
+				this.choose()
 			},
 			chooseWithTrade(index) {
 				let trade = this.tradesResultArr[index]
@@ -185,7 +190,7 @@
 		display: flex;
 		display:-webkit-flex;
 		background: white;
-		border-top:1px solid #cfcfcf;
+		border:1px solid #cfcfcf;
 	}
 	.card-actions .card-action {
 		flex:1;
@@ -195,6 +200,7 @@
 	.card-action.card-action-discard {
 		border-right:none;
 	}
+
 	.trades-list-container {
 		width:100%;
 		background-color: #cfcfcf;

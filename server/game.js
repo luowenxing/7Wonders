@@ -1,5 +1,6 @@
 
 var Player = require('./player.js')
+var randomWonder = require('./cards/WonderCreator.js')
 var { dividedCards } = require('./cards/CardCreator.js')
 var { GameStatus,ChoiceAction } = require('./util/consts.js')
 
@@ -8,9 +9,12 @@ class Game {
         this.playersCount = options.playersCount
         this.players = []
         this.status = GameStatus.Start
-        this.age = 0
+        this.age = 1
+        let wonders = randomWonder(this.playerCount)
         for(let i=0;i<this.playersCount;i++) {
-            this.players.push(new Player())
+            this.players.push(new Player({
+                wonder:wonders[i]
+            }))
         }
         this.players.forEach( (player,index) => {
             player.leftPlayer = this.leftPlayer(index)
@@ -79,11 +83,13 @@ class Game {
                     }
                     break
                 case ChoiceAction.Discard:
+                    this.choosed[index] = true
                     cards.splice(chooseIndex,1)
                     player.discard()
                     break
                 case ChoiceAction.BuildWonder:
                     if(this.canBuildWonder(index)){
+                        this.choosed[index] = true
                         cards.splice(chooseIndex,1)
                         player.buildWonder(card)
                     }else {

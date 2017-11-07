@@ -17,6 +17,7 @@ var {
 class Player {
     constructor(options) {
         // 初始化卡牌
+        this.wonder = options.wonder
         if(options) {
             this.cards = options.cards
             this.money = options.money
@@ -67,13 +68,14 @@ class Player {
         return {
             cards:this.cards,
             money:this.money,
+            wonder:this.wonder
         }
     }
     get privateInfo(){
         return {
             cards:this.cards,
             money:this.money,
-            wonderCard:[] // TODO隐藏的奇迹卡牌
+            wonder:this.wonder
         }
     }
     build(card) {
@@ -114,6 +116,11 @@ class Player {
                 }
                 if(Resources.hasRes(nowRes,card.costs).result) {
                     this.money -= (costMoney + cardCostMoney)
+                    if(trade instanceof Array && trade.length === 2) { 
+                        // 有交易，加钱
+                        this.leftPlayer.money += trade[0].costMoney
+                        this.rightPlayer.money += trade[1].costMoney
+                    }
                     return true
                 } else {
                     return false // 资源不够
