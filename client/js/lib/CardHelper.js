@@ -28,6 +28,13 @@ export function cardCostsRepresent(card) {
 
 export function cardEffectRepresent(card) {
 	let effects = []
+	if(card.res) {
+		return resRepresent(card.res)
+	}
+	if(card.orRes) {
+		// OR资源在另一列显示，需要分割线
+		return []
+	}
 	if(card.score) {
 		effects.push({
 			imageName:Indicators.Score,
@@ -47,6 +54,19 @@ export function cardEffectRepresent(card) {
 		effects.push({
 			imageName:card.technic,
 			innerText:''
+		})
+	}
+	if(card.money) {
+		effects.push({
+			imageName:Indicators.Money,
+			innerText:card.money
+		})
+	}
+	if(effects.length === 0) {
+		effects.push({
+			imageName:card.name,
+			innerText:'',
+			width:'100%'
 		})
 	}
 	return effects

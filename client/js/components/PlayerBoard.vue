@@ -1,7 +1,7 @@
 <template>
    <div class="player-board">
         <Builds :player="player" class="player-builds"/>
-        <Wonder  class="player-wonder" />
+        <Wonder :player="player" class="player-wonder" />
    </div>
 </template>
 <script>

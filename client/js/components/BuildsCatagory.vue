@@ -5,17 +5,26 @@
             v-for="build in builds"
             :key="build.name"
             :style="{'backgroundColor':build.color}">
-            {{ build.name }}
+            <CardEffect :card="build" />
         </div>
     </div>
 </template>
 <script>
+    import CardEffect from './CardEffect.vue'
     export default {
+        methods:{
+            cardEffect(build){
+                return cardEffectRepresent(build)
+            }
+        },
         props:{
             builds:{
                 type:Array,
                 required:true
             }
+        },
+        components:{
+            CardEffect
         }
     }
 </script>

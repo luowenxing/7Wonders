@@ -1,7 +1,7 @@
 <template>
     <div class="modal" @click="cancelChoose">
         <div class="card-detail-container">
-        	<HandCard :card="card" :index="index"/>
+        	<HandCard :card="card" :index="index" type="card-detail"/>
         	<CardAction :card="card" :index="index" 
         	v-on:finishChoose="finishChoose"/>
         </div>

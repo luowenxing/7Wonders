@@ -6,8 +6,8 @@
    	</div>
 </template>
 <script>
-	import { getResInArr } from '../lib/CardHelper.js'
-    export default {
+	 import { getResInArr } from '../lib/CardHelper.js'
+      export default {
     	props:{
             trades:{
                 type:Array,
@@ -16,7 +16,7 @@
         },
 
         computed:{
-        	tradesResInfo() {
+          tradesResInfo() {
         		return this.trades.map(trade => {
         			return getResInArr(trade.res)
         		})
@@ -25,7 +25,7 @@
     }
 </script>
 <style>
-	.trade-container {
+    .trade-container {
 		display: flex;
 		background:white
 	}

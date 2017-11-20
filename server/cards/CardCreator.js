@@ -799,7 +799,7 @@ var Yellow = flatten([
 
     // AGE2 4种
     [3,6,7].map( minPlayers => 
-        new TradeCard({
+        new TradeResOwnCard({
             name:'FORUM',
             age:2,
             costs:{

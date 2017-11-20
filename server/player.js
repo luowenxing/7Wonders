@@ -18,13 +18,12 @@ class Player {
     constructor(options) {
         // 初始化卡牌
         this.wonder = options.wonder
-        if(options) {
+        this.money = options.money || 3
+        if(options.cards) {
             this.cards = options.cards
-            this.money = options.money
         } else {
             this.cards = {...Color}
             Object.keys(this.cards).forEach( key => this.cards[key] = [])
-            this.money = 3
         }
         // TODO:Indicator指示器
     }
