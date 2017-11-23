@@ -1,7 +1,8 @@
 
 var { Color } = require('./util/consts.js')
 var Resources = require('./cards/Resources.js')
-var { flatten } = require('./util/util.js')
+var { flatten,extend } = require('./util/util.js')
+var { Wonder } = require('./cards/Wonder.js')
 var {
     InfrastructureCard,
     GuildCard,
@@ -14,18 +15,24 @@ var {
     ResourceCard
 }  = require('./cards/Card.js')
 
+
+
 class Player {
     constructor(options) {
-        // 初始化卡牌
-        this.wonder = options.wonder
-        this.money = options.money || 3
-        if(options.cards) {
-            this.cards = options.cards
-        } else {
-            this.cards = {...Color}
-            Object.keys(this.cards).forEach( key => this.cards[key] = [])
+        var defaultCards = {...Color}
+        Object.keys(defaultCards).forEach( key => defaultCards[key] = [])
+        var defaultOptions = {
+            money:3,
+            wonder:null,
+            cards:defaultCards
         }
-        // TODO:Indicator指示器
+        extend(this,{
+            ...defaultOptions,
+            ...options,
+        })
+        if(this.wonder) {
+            this.wonder = new Wonder(this.wonder)
+        }
     }
     get allCards() {
         return flatten(Object.keys(this.cards).map(key => this.cards[key]))
@@ -43,6 +50,7 @@ class Player {
             card.res && res.push(card.res)
             card.orRes && orRes.push(card.orRes)
         })
+        res.push(this.wonder.res)
         return {
             res:Resources.sum(res),
             orRes

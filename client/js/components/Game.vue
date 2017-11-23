@@ -1,6 +1,5 @@
 <template>
     <div class="game-container">
-        <div style="position:absolute;top:0;right:0">{{index}}</div>
         <PlayerBoards class="game-item"/>
         <HandCards />
     </div>

@@ -2,6 +2,7 @@
    <div class="player-board">
         <Builds :player="player" class="player-builds"/>
         <Wonder :player="player" class="player-wonder" />
+        <div class="player-hand-cards" />
    </div>
 </template>
 <script>
@@ -32,5 +33,8 @@
     }
     .player-board .player-wonder {
         flex:1;
+    }
+    .player-board .player-hand-cards {
+        flex:0 0 20%;
     }
 </style>

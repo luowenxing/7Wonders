@@ -8,6 +8,9 @@ class Wonder {
 		this.res = options.res && new Resources(options.res)
 		this.choosenSide = 0
 	}
+	get current(){
+		return this.wonders[this.choosenSide]
+	}
 }
 
 class WonderSide {

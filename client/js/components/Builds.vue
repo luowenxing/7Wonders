@@ -33,8 +33,10 @@
     .builds-container {
         display:flex;
         display:-webkit-flex;
+        padding:0px 2px;
     }
     .builds-container .builds-catagory{
         flex:1;
+        padding:0px 2px;
     }
 </style>

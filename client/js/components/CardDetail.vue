@@ -50,5 +50,9 @@
 		margin-top:20%;
 		position: relative;
 	}
+	.card-detail-container .card-container .card .card-cost {
+        width:17%;
+        flex:0 0 17%;
+    }
 
 </style>

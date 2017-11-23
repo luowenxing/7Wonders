@@ -1,5 +1,5 @@
 
-const { Resource } = require('../util/consts.js')
+const { Resource,Color } = require('../util/consts.js')
 const { cartesianProductOf,extend } = require('../util/util.js')
 const keys = Object.keys(Resource)
 const brownKeys = [Resource.Wood,Resource.Brick,Resource.Stone,Resource.Mineral]
@@ -52,6 +52,11 @@ class Resources {
 			}
 		})
 		return result
+	}
+	get color(){
+		return brownKeys.reduce((result,key) => {
+			return result || this[key] > 0
+		},false) ? Color.Brown : Color.Grey
 	}
 	equals(res2) {
 		return keys.reduce((result,key) => {

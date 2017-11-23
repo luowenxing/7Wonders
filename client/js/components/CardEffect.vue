@@ -36,10 +36,6 @@
                 type:Object,
                 required:true
             },
-            type:{
-                type:String,
-                required:false
-            }
         }
     }
 </script>
@@ -49,8 +45,8 @@
     .card-effect-container .card-or-res .card-or-res-item {
         text-align: center;
         position:relative;
-        width:30%;
-        margin: 0 3px;
+        width:40%;
+        margin: 0 3%;
         font-size: 0px;
     }
     .card-effect-container .card-effect {
@@ -68,7 +64,7 @@
         top: 50%;
         left: 50%;
         transform: translateX(-50%) translateY(-50%);
-        font-size: 20px;
+        font-size: 16px;
         font-weight: bold;
         font-family: sans-serif
     }
@@ -77,7 +73,8 @@
     .card-effect-container .card-or-res .card-or-res-item:after {
         content: '';
         position: absolute;
-        width: 2px;
+        width: 6%;
+        right:-8%;
         height: 60%;
         top: 50%;
         transform: skewX(-10deg) translateY(-50%)

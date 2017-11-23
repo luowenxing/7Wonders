@@ -16,9 +16,9 @@
                 :key="handCard.uuid"
                 :card="handCard" 
                 :index="index" 
-                :type="'hand-card'"
                 :style="offsetStyle[index]"
                 :data-index="index"
+                class="hand-card"
                 @click.native="chooseCard(index)"/>
             </transition-group>
         </div>

@@ -39,5 +39,11 @@
         width:100%;
         word-break: break-all;
         color: white;
+        height: 25px;
+        display: flex;
+        align-items: center;
+        box-shadow: 0px 2px 2px #333333, 0px 0px 2px #333333;
+        border-radius:4px;
+        margin-bottom: 6px;
     }
 </style>
