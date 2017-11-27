@@ -26,6 +26,7 @@
         v-if="showCardDetail" 
         :card="choosenCard" 
         :index="choosenIndex"
+        :visible="visibleCardDetail"
         v-on:cancelChoose="cancelChoose"
         v-on:finishChoose="finishChoose"/>
     </div>
@@ -46,6 +47,7 @@
         data(){
             return {
                 showCardDetail:false,
+                visibleCardDetail:false,
                 choosenIndex:0,
                 choosenCard:null,
                 choosing:false,
@@ -69,14 +71,12 @@
                     },index * 150)
                 } else if(this.status === GameStatus.NeedChoose){
                     this.elTransform(el)
+                    this.showCardDetail = true
                     setTimeout(() => {
-                        
+                        this.choosing = false
+                        this.visibleCardDetail = true
                         done()
                     },300)
-                    setTimeout(() => {
-                        this.showCardDetail = true
-                        this.choosing = false
-                    },280)
                 } else {
                     done()
                 }
@@ -151,10 +151,12 @@
             },
             cancelChoose(index,card) {
                 this.showCardDetail = false
+                this.visibleCardDetail = false
                 this.$store.commit('insertCard',{index,card})
             },
             finishChoose(index,card) {
                 this.showCardDetail = false
+                this.visibleCardDetail = false
             }
         },
         computed:{

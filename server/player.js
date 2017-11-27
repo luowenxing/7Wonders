@@ -1,7 +1,7 @@
 
 var { Color } = require('./util/consts.js')
 var Resources = require('./cards/Resources.js')
-var { flatten,extend } = require('./util/util.js')
+var { flatten,extend,sum } = require('./util/util.js')
 var { Wonder } = require('./cards/Wonder.js')
 var {
     InfrastructureCard,
@@ -24,7 +24,9 @@ class Player {
         var defaultOptions = {
             money:3,
             wonder:null,
-            cards:defaultCards
+            cards:defaultCards,
+            leftPlayer:null,
+            rightPlayer:null
         }
         extend(this,{
             ...defaultOptions,
@@ -50,7 +52,9 @@ class Player {
             card.res && res.push(card.res)
             card.orRes && orRes.push(card.orRes)
         })
+        // 增加奇迹提供的资源
         res.push(this.wonder.res)
+        orRes.concat(this.wonder.orRes)
         return {
             res:Resources.sum(res),
             orRes
@@ -66,6 +70,7 @@ class Player {
                 card.orRes && orRes.push(card.orRes)
             }
         })
+        res.push(this.wonder.res)
         return {
             res:Resources.sum(res),
             orRes
@@ -84,6 +89,17 @@ class Player {
             money:this.money,
             wonder:this.wonder
         }
+    }
+    get score(){
+        let blueScore = sum(this.cards[Color.Blue],'score')
+        let moneyScore = this.money / 3
+        let wonderScore = this.wonder.score
+        return blueScore + moneyScore + wonderScore
+    }
+    get arms(){
+        let cardArms = sum(this.cards[Color.Red],'arms')
+        let wonderArms = this.wonder.arms
+        return cardArms + wonderArms
     }
     build(card) {
         this.cards[card.color].push(card)
@@ -122,7 +138,15 @@ class Player {
                     orRes:ownRes.orRes
                 }
                 if(Resources.hasRes(nowRes,card.costs).result) {
+                    // 修建成功
+                    // TODO 应该放在build方法里，这个方法应该是不修改状态的
                     this.money -= (costMoney + cardCostMoney)
+                    if(card.caculateMoney) {
+
+                        // 计算这张卡增加的money
+                        this.money += this.caculateMoney([this.leftPlayer,this,this,rightPlayer])
+                    }
+
                     if(trade instanceof Array && trade.length === 2) { 
                         // 有交易，加钱
                         this.leftPlayer.money += trade[0].costMoney

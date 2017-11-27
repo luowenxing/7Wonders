@@ -1,6 +1,6 @@
 <template>
     <div class="modal" @click="cancelChoose">
-        <div class="card-detail-container">
+        <div class="card-detail-container" :style="'visibility:' + (visible ? 'visible' : 'hidden')">
         	<HandCard :card="card" :index="index" type="card-detail"/>
         	<CardAction :card="card" :index="index" 
         	v-on:finishChoose="finishChoose"/>
@@ -19,6 +19,10 @@
             index:{
                 type:Number,
                 required:true
+            },
+            visible:{
+            	type:Boolean,
+            	required:true
             }
         },
         methods:{
@@ -42,6 +46,8 @@
 		height:100%;
 		top:0;
 		left:0;
+		-webkit-user-select:none;
+		user-select: none;
 	}
 	.card-detail-container {
 		width:60%;
@@ -50,9 +56,5 @@
 		margin-top:20%;
 		position: relative;
 	}
-	.card-detail-container .card-container .card .card-cost {
-        width:17%;
-        flex:0 0 17%;
-    }
 
 </style>

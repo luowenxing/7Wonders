@@ -45,7 +45,7 @@
         height: 30PX;
 	}
 	.trade {
-		flex:1;
+		flex:;
         display:-webkit-flex;
         display: flex;
 	}

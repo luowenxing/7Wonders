@@ -1,6 +1,9 @@
-exports.sum = function(arr) {
-    return arr.reduce((sum,item) => { return sum + item },0)
+exports.sum = function(arr,attr) {
+    return arr.reduce((sum,item) => { 
+        return sum + (attr ? item[attr] : item) 
+    },0)
 }
+
 
 exports.flatten = function(arr) {
     var result = []

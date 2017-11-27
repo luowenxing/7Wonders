@@ -62,12 +62,22 @@ export function cardEffectRepresent(card) {
 			innerText:card.money
 		})
 	}
-	if(effects.length === 0) {
+	if(effects.length === 0 && card.name) {
 		effects.push({
 			imageName:card.name,
 			innerText:'',
 			width:'100%'
 		})
 	}
+	if(card.stageName) {
+		effects.push({
+			imageName:card.stageName,
+			innerText:'',
+			width:'100%'
+		})
+	}
 	return effects
 }
+
+
+

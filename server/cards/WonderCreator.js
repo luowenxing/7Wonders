@@ -149,7 +149,8 @@ let Babylone = new Wonder({
 						[Technic.Medicine]:1,
 						[Technic.Industry]:1,
 						[Technic.Education]:1
-					}
+					},
+					stageName:'babylon_a'
 				}),
 				new Stage({
 					costs:{
@@ -173,7 +174,8 @@ let Babylone = new Wonder({
 						[Resource.Glass]:1,
 						[Resource.Wood]:2
 					},
-					ability:WonderAbility.NoDiscard
+					ability:WonderAbility.NoDiscard,
+					stageName:'babylon_b2'
 				}),
 				new Stage({
 					costs:{
@@ -184,7 +186,8 @@ let Babylone = new Wonder({
 						[Technic.Medicine]:1,
 						[Technic.Industry]:1,
 						[Technic.Education]:1
-					}
+					},
+					stageName:'babylon_a'
 				}),
 			]
 		}),
@@ -269,7 +272,8 @@ let Halicarnasse = new Wonder({
 					costs:{
 						[Resource.Mineral]:3
 					},
-					ability:WonderAbility.DiscardFree
+					ability:WonderAbility.DiscardFree,
+					stageName:'halikarnassos_a'
 				}),
 				new Stage({
 					costs:{
@@ -286,14 +290,16 @@ let Halicarnasse = new Wonder({
 						[Resource.Mineral]:2
 					},
 					score:2,
-					ability:WonderAbility.DiscardFree
+					ability:WonderAbility.DiscardFree,
+					stageName:'halikarnassos_a'
 				}),
 				new Stage({
 					costs:{
 						[Resource.Brick]:3
 					},
 					score:1,
-					ability:WonderAbility.DiscardFree
+					ability:WonderAbility.DiscardFree,
+					stageName:'halikarnassos_a'
 				}),
 				new Stage({
 					costs:{
@@ -301,7 +307,8 @@ let Halicarnasse = new Wonder({
 						[Resource.Paper]:1,
 						[Resource.Cloth]:1,
 					},
-					ability:WonderAbility.DiscardFree
+					ability:WonderAbility.DiscardFree,
+					stageName:'halikarnassos_a'
 				}),
 			]
 		}),
@@ -377,7 +384,8 @@ let Zeus = new Wonder({
 					costs:{
 						[Resource.Stone]:2
 					},
-					ability:WonderAbility.BuildFree
+					ability:WonderAbility.BuildFree,
+					stageName:'olympia_a'
 				}),
 				new Stage({
 					costs:{
@@ -395,6 +403,7 @@ let Zeus = new Wonder({
 					},
 					directions:[Directions.Left,Directions.Right],
 					buyRes:[Resource.Brick,Resource.Stone,Resource.Mineral,Resource.Wood],
+					stageName:'olympia_b1'
 				}),
 				new Stage({
 					costs:{
@@ -407,7 +416,8 @@ let Zeus = new Wonder({
 						[Resource.Mineral]:2,
 						[Resource.Cloth]:1
 					},
-					ability:WonderAbility.CopyGuild
+					ability:WonderAbility.CopyGuild,
+					stageName:'olympia_b3'
 				}),
 			]
 		}),

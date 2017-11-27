@@ -1,12 +1,17 @@
 <template>
     <div :style="'background-image:url('+ require('../../assets/images/' + player.wonder.name + '.jpg') +')'" class="wonder">
-        <div class="wonder-res" :style="resStyle">
-            <img v-for="res in resRepresent" :src="require('../../assets/images/' + res.imageName + '.png')"  alt="" />
+        <div class="wonder-info" >
+            <div class="wonder-res" :style="resStyle">
+                <img v-for="res in resRepresent" :src="require('../../assets/images/' + res.imageName + '.png')"  alt="" />
+            </div>
+            <PlayerState class="wonder-player-state" :player="Player" />
         </div>
-        <div class="wonder-stages">
-            <div v-for="wonder in currentWonder" class="wonder-stage" >
-                <div class="wonder-stage-container">
 
+        <div class="wonder-stages">
+            <div v-for="stage in wonderStages" class="wonder-stage" >
+                <div class="wonder-stage-container">
+                    <Cost :cost="stage" class="wonder-stage-cost"/>
+                    <CardEffect :card="stage" class="wonder-stage-effect" />
                 </div>
             </div>
         </div>
@@ -17,6 +22,9 @@
     import { Color } from 'shared/util/consts.js'
     import Resources from  'shared/cards/Resources.js'
     import Player from 'shared/player.js'
+    import Cost from './Cost.vue'
+    import CardEffect from './CardEffect.vue'
+    import PlayerState from './PlayerState.vue'
     export default {
     	props:{
             player:{
@@ -40,9 +48,14 @@
             Player(){
                 return new Player(this.player)
             },
-            currentWonder(){
-                return this.Player.wonder.current
+            wonderStages(){
+                return this.Player.wonder.current.stages
             }
+        },
+        components:{
+            Cost,
+            CardEffect,
+            PlayerState
         }
 
     }
@@ -53,14 +66,23 @@
         display: flex;
         flex-direction: column;
     }
-    .wonder .wonder-res {
+    .wonder .wonder-info {
+        display: flex;
+        display: -webkit-flex;
+    }
+
+    .wonder .wonder-info .wonder-res {
         width: 80px;
         height: 40px;
         text-align: center;
         padding: 4px 0px;
     }
-    .wonder .wonder-res img {
+    .wonder .wonder-info .wonder-res img {
         height:100%;
+    }
+    .wonder .wonder-info .wonder-player-state {
+        flex:1;
+        height:40px;
     }
     .wonder .wonder-stages {
         flex:1;
@@ -71,15 +93,41 @@
     .wonder .wonder-stages .wonder-stage {
         flex:1;
         margin:0px 4px;
-        margin-top:40px;
+        margin-top:10%;
         border:4px solid #FFFFFF;
         border-bottom: none;
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
         display: flex;
         display: -webkit-flex;
-        
+        background: rgba(255,255,255,0.6);
     }
+    .wonder-stage-container {
+        display:flex;
+        display: -webkit-flex;
+        width:100%;
+    }
+    .wonder-stage-container .wonder-stage-cost {
+        flex:0 0 20px;
+        flex-direction: column-reverse;
+        display: flex;
+        display: -webkit-flex;
+    }
+
+    .wonder-stage-container .wonder-stage-effect {
+        flex:1;
+        display: flex;
+        display: -webkit-flex;
+        align-items: center;
+    }
+
+    .card-effect-container.wonder-stage-effect .card-or-res .card-or-res-item:after {
+        background: black !important;
+    }
+    .card-effect-container.wonder-stage-effect .card-effect-item {
+        width:60%;
+    }
+
 
 
 

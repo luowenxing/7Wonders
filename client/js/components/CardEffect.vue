@@ -48,6 +48,8 @@
         width:40%;
         margin: 0 3%;
         font-size: 0px;
+        display: flex;
+        align-items: center;
     }
     .card-effect-container .card-effect {
         display: flex;

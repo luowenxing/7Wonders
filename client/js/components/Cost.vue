@@ -23,10 +23,12 @@
 	}
 </script>
 <style>
+
 	.cost .cost-item {
         text-align: center;
         position:relative;
         margin:4% 0px;
+        line-height: 0px;
     }
 
     .cost .cost-item>img{
