@@ -145,7 +145,7 @@ let Babylone = new Wonder({
 					costs:{
 						[Resource.Wood]:3
 					},
-					orTechnic:{
+					orTechnics:{
 						[Technic.Medicine]:1,
 						[Technic.Industry]:1,
 						[Technic.Education]:1
@@ -182,7 +182,7 @@ let Babylone = new Wonder({
 						[Resource.Brick]:3,
 						[Resource.Paper]:1
 					},
-					orTechnic:{
+					orTechnics:{
 						[Technic.Medicine]:1,
 						[Technic.Industry]:1,
 						[Technic.Education]:1

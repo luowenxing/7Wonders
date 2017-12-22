@@ -8,6 +8,7 @@ var {
 var {sum} = require('../util/util.js')
 var uuidv4 = require('uuid/v4')
 var Resources = require('./Resources.js')
+var Technics = require('./Technics.js')
 
 class BaseCard {
     constructor(options) {
@@ -34,7 +35,7 @@ var IndicatorCardMixin = Base => class extends Base {
     caculate(players,multiple) {
         return sum(this.directions.map((direction) => {
             return sum(this.indicatorNames.map(indicatorName => {
-                return players[direction][this.indicatorName] * multiple
+                return players[direction][indicatorName]() * multiple
             }))
         }))
     }
@@ -100,7 +101,7 @@ class TradeFuncCard extends IndicatorCardMixin(TradeCard) {
 class TechnicCard extends BaseCard {
     constructor(options) {
         super(options)
-        this.technic = options.technic
+        this.technics = new Technics(options.technics)
         this.color = Color.Green
     }
 }
@@ -119,6 +120,7 @@ class GuildCard extends IndicatorCardMixin(BaseCard) {
         this.scoreMul = options.scoreMul || 0
         this.age = 3
         this.color = Color.Purple
+        this.orTechnics = options.orTechnics
     }
     caculateScore(players) {
         return this.caculate(players,this.scoreMul)

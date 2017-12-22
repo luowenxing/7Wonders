@@ -1,8 +1,9 @@
 
-var { Color } = require('./util/consts.js')
+var { Color,Indicators } = require('./util/consts.js')
 var Resources = require('./cards/Resources.js')
 var { flatten,extend,sum } = require('./util/util.js')
 var { Wonder } = require('./cards/Wonder.js')
+var Technics = require('./cards/Technics.js')
 var {
     InfrastructureCard,
     GuildCard,
@@ -26,7 +27,10 @@ class Player {
             wonder:null,
             cards:defaultCards,
             leftPlayer:null,
-            rightPlayer:null
+            rightPlayer:null,
+            score:0,
+            lose:0,
+            win:0
         }
         extend(this,{
             ...defaultOptions,
@@ -54,7 +58,21 @@ class Player {
         })
         // 增加奇迹提供的资源
         res.push(this.wonder.res)
-        orRes.concat(this.wonder.orRes)
+        orRes = orRes.concat(this.wonder.orRes)
+
+        return {
+            res:new Resources({
+                Wood:100,
+                Brick:100,
+                Stone:100,
+                Mineral:100,
+                Cloth:100,
+                Glass:100,
+                Paper:100
+            }),
+            orRes
+        }
+
         return {
             res:Resources.sum(res),
             orRes
@@ -80,6 +98,7 @@ class Player {
         return {
             cards:this.cards,
             money:this.money,
+            score:this.score,
             wonder:this.wonder
         }
     }
@@ -87,22 +106,28 @@ class Player {
         return {
             cards:this.cards,
             money:this.money,
+            score:this.score,
             wonder:this.wonder
         }
-    }
-    get score(){
-        let blueScore = sum(this.cards[Color.Blue],'score')
-        let moneyScore = this.money / 3
-        let wonderScore = this.wonder.score
-        return blueScore + moneyScore + wonderScore
     }
     get arms(){
         let cardArms = sum(this.cards[Color.Red],'arms')
         let wonderArms = this.wonder.arms
         return cardArms + wonderArms
     }
+    get technics(){
+        let technics = this.cards[Color.Green].map(card => card.technics)
+        let cardOrTechnics = this.cards[Color.Purple].filter(card => card.orTechnics).map(card => card.orTechnics)
+        let orTechnics = this.wonder.orTechnics.concat(cardOrTechnics)
+        return {
+            technics,
+            orTechnics
+        }
+    }
     build(card) {
         this.cards[card.color].push(card)
+        this.updateScore()
+
     }
     canBuild(card,choice) {
         if(this.cardsName[card.name]) {
@@ -142,9 +167,8 @@ class Player {
                     // TODO 应该放在build方法里，这个方法应该是不修改状态的
                     this.money -= (costMoney + cardCostMoney)
                     if(card.caculateMoney) {
-
                         // 计算这张卡增加的money
-                        this.money += this.caculateMoney([this.leftPlayer,this,this,rightPlayer])
+                        this.money += card.caculateMoney([this.leftPlayer,this,this.rightPlayer])
                     }
 
                     if(trade instanceof Array && trade.length === 2) { 
@@ -204,7 +228,38 @@ class Player {
             return -1
         }
     }
+    updateScore(){
+        let blueScore = sum(this.cards[Color.Blue],'score')
+        let moneyScore = this.money / 3
+        let wonderScore = this.wonder.score
+        // 计算黄色、紫色卡牌等需要计算左右两边的卡牌的分数
+        let indicatorsCards = this.cards[Color.Yellow].concat(this.cards[Color.Purple])
+        let indicatorsScore = indicatorsCards.reduce((sum,card) => {
+            return sum + card.caculateScore([this.leftPlayer,this,this.rightPlayer])
+        },0)
+        // 计算科技牌
+        let technicsObj = this.technics
+        let technicsScore = Technics.caculateScore(technicsObj.technics,technicsObj.orTechnics)
+
+        this.score =  blueScore + moneyScore + wonderScore + indicatorsScore + technicsScore
+    }
 }
+
+
+// Player中需要向Card暴露的方法，用于计算卡片的分数
+Object.keys(Color).forEach(color => {
+    Player.prototype[color] = function(){
+        return this.cards[color].length
+    }
+})
+Player.prototype[Indicators.Wonders] = function(){
+    return this.wonder.current.stageLevel
+}
+Player.prototype[Indicators.Lose] = function(){
+    return this.lose
+}
+
+
 
 module.exports = Player
 

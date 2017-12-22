@@ -210,16 +210,6 @@ var Purple = [{
         indicatorNames:[Indicators.Brown,Indicators.Grey,Indicators.Purple],
         scoreMul:1,
     },{
-        name:'SCIENTISTS GUILD',
-        costs:{
-            [Resource.Wood]:2,
-            [Resource.Mineral]:2,
-            [Resource.Paper]:1,
-        },
-        directions:[Directions.Middle],
-        indicatorNames:[Indicators.Medicine,Indicators.Industry,Indicators.Education],
-        scoreMul:0,
-    },{
         name:'MAGISTRATES GUILD',
         costs:{
             [Resource.Wood]:3,
@@ -239,6 +229,19 @@ var Purple = [{
         directions:[Directions.Left,Directions.Middle,Directions.Right],
         indicatorNames:[Indicators.Wonders],
         scoreMul:1,
+    },{
+        name:'SCIENTISTS GUILD',
+        costs:{
+            [Resource.Wood]:2,
+            [Resource.Mineral]:2,
+            [Resource.Paper]:1,
+        },
+        orTechnics:{
+            [Technic.Medicine]:1,
+            [Technic.Industry]:1,
+            [Technic.Education]:1
+        },
+        scoreMul:0,
     }].map( options => new GuildCard(options))
 
 // 蓝色基建牌
@@ -600,7 +603,7 @@ var Green = [
                 [Resource.Cloth]:1,
             },
             name:'APOTHECARY',
-            technic:Technic.Medicine,
+            technics:{[Technic.Medicine]:1},
             age:1,
             freeBuilds:['STABLES','DISPENSARY'],
             minPlayers
@@ -612,7 +615,7 @@ var Green = [
                 [Resource.Glass]:1,
             },
             name:'WORKSHOP',
-            technic:Technic.Industry,
+            technics:{[Technic.Industry]:1},
             age:1,
             freeBuilds:['ARCHERY RANGE','LABORATORY'],
             minPlayers
@@ -624,7 +627,7 @@ var Green = [
                 [Resource.Paper]:1,
             },
             name:'SCRIPTORIUM',
-            technic:Technic.Education,
+            technics:{[Technic.Education]:1},
             age:1,
             freeBuilds:['COURTHOUSE','LIBRARY'],
             minPlayers
@@ -638,7 +641,7 @@ var Green = [
                 [Resource.Glass]:1,
             },
             name:'DISPENSARY',
-            technic:Technic.Medicine,
+            technics:{[Technic.Medicine]:1},
             age:2,
             basements:['APOTHECARY'],
             freeBuilds:['ARENA','LODGE'],
@@ -652,7 +655,7 @@ var Green = [
                 [Resource.Paper]:1,
             },
             name:'LABORATORY',
-            technic:Technic.Industry,
+            technics:{[Technic.Industry]:1},
             age:2,
             basements:['WORKSHOP'],
             freeBuilds:['SIEGE WORKSHOP','OBSERVATORY'],
@@ -666,7 +669,7 @@ var Green = [
                 [Resource.Cloth]:1,
             },
             name:'LIBRARY',
-            technic:Technic.Education,
+            technics:{[Technic.Education]:1},
             age:2,
             basements:['SCRIPTORIUM'],
             freeBuilds:['SENATE','UNIVERSITY'],
@@ -680,7 +683,7 @@ var Green = [
                 [Resource.Paper]:1,
             },
             name:'SCHOOL',
-            technic:Technic.Education,
+            technics:{[Technic.Education]:1},
             age:2,
             freeBuilds:['ACADEMY','STUDY'],
             minPlayers
@@ -696,7 +699,7 @@ var Green = [
                 [Resource.Paper]:1,
             },
             name:'LODGE',
-            technic:Technic.Medicine,
+            technics:{[Technic.Medicine]:1},
             age:3,
             basements:['DISPENSARY'],
             minPlayers
@@ -710,7 +713,7 @@ var Green = [
                 [Resource.Cloth]:1,
             },
             name:'OBSERVATORY',
-            technic:Technic.Industry,
+            technics:{[Technic.Industry]:1},
             age:3,
             basements:['LABORATORY'],
             minPlayers
@@ -724,7 +727,7 @@ var Green = [
                 [Resource.Glass]:1,
             },
             name:'UNIVERSITY',
-            technic:Technic.Education,
+            technics:{[Technic.Education]:1},
             age:3,
             basements:['LIBRARY'],
             minPlayers
@@ -737,7 +740,7 @@ var Green = [
                 [Resource.Glass]:1,
             },
             name:'ACADEMY',
-            technic:Technic.Medicine,
+            technics:{[Technic.Medicine]:1},
             age:3,
             basements:['SCHOOL'],
             minPlayers
@@ -751,7 +754,7 @@ var Green = [
                 [Resource.Cloth]:1,
             },
             name:'STUDY',
-            technic:Technic.Industry,
+            technics:{[Technic.Industry]:1},
             age:3,
             basements:['SCHOOL'],
             minPlayers
@@ -911,10 +914,10 @@ var Yellow = flatten([
                 [Resource.Stone]:2,
             },
             age:3,
-            directions:[Directions.Left,Directions.Middle,Directions.Right],
+            directions:[Directions.Middle],
             indicatorNames:[Indicators.Wonders],
             basements:['DISPENSARY'],
-            moneyMul:1,
+            moneyMul:3,
             scoreMul:1,
             minPlayers
         })

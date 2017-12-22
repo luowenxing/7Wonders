@@ -78,7 +78,19 @@ exports.distinct = function(arr,condition) {
 }
 
 exports.extend = function(a,b) {
-    Object.keys(b).forEach(key => {
-        a[key] = b[key]
-    })
+    if(b) {
+        Object.keys(b).forEach(key => {
+            a[key] = b[key]
+        })
+    }
 }
+
+exports.max = function(arr) {
+    return arr.reduce((sum,item) => item >= sum ? item : sum,arr[0])
+}
+
+exports.min = function(arr) {
+    return arr.reduce((sum,item) => item <= sum ? item : sum,arr[0])
+}
+
+

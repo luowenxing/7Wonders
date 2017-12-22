@@ -9,7 +9,7 @@ class Game {
         this.playersCount = options.playersCount
         this.players = []
         this.status = GameStatus.Start
-        this.age = 0
+        this.age = 2
         let wonders = randomWonder(this.playerCount)
         for(let i=0;i<this.playersCount;i++) {
             this.players.push(new Player({

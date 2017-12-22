@@ -8,7 +8,7 @@
         </div>
 
         <div class="wonder-stages">
-            <div v-for="stage in wonderStages" class="wonder-stage" >
+            <div v-for="(stage,index) in wonderStages" class="wonder-stage" :class="{build:isBuild(index)}">
                 <div class="wonder-stage-container">
                     <Cost :cost="stage" class="wonder-stage-cost"/>
                     <CardEffect :card="stage" class="wonder-stage-effect" />
@@ -35,6 +35,12 @@
         created(){
 
         },
+        methods:{
+            isBuild(index){
+                let current = this.Player.wonder.current
+                return index < current.stageLevel 
+            }
+        },
         computed:{
             resRepresent(){
                 return resRepresent(this.player.wonder.res)
@@ -50,7 +56,7 @@
             },
             wonderStages(){
                 return this.Player.wonder.current.stages
-            }
+            },
         },
         components:{
             Cost,
@@ -102,6 +108,10 @@
         display: -webkit-flex;
         background: rgba(255,255,255,0.6);
     }
+    .wonder .wonder-stages .wonder-stage.build {
+        background: white;
+    }
+
     .wonder-stage-container {
         display:flex;
         display: -webkit-flex;

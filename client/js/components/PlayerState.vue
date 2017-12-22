@@ -32,10 +32,10 @@
     .player-state-container {
         display: flex;
         display: -webkit-flex;
+        justify-content: space-evenly;
     }
     .player-state-container .player-state {
         text-align: center;
-        flex:1;
         position: relative;
         line-height: 0px;
     }

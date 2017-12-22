@@ -21,6 +21,15 @@ class Wonder {
 	get arms(){
 		return sum(this.currentStages,'arms')
 	}
+	get orTechnics() {
+		let stages = this.currentStages
+		return stages.reduce((sum,stage) => {
+			if(stage.orTechnics) {
+				sum.push(stage.orTechnics)
+			}
+			return sum
+		},[])
+	}
 	get orRes(){
 		let stages = this.currentStages
 		return stages.reduce((sum,stage) => {
@@ -35,7 +44,7 @@ class Wonder {
 class WonderSide {
 	constructor(options) {
 		this.stages = options.stages
-		this.stageLevel = 2
+		this.stageLevel = 3
 	}
 }
 
@@ -50,6 +59,7 @@ class Stage {
 		this.money = options.money || 0
 		this.arms = options.arms || 0
 		this.ability = options.ability
+		this.orTechnics = options.orTechnics
 		this.card = ''
 	}
 }

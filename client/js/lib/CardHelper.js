@@ -50,11 +50,17 @@ export function cardEffectRepresent(card) {
 			})
 		}
 	}
-	if(card.technic) {
-		effects.push({
-			imageName:card.technic,
-			innerText:''
-		})
+	if(card.technics) {
+		let technics = card.technics
+		Object.keys(technics).forEach((key) => {
+	        let count = technics[key]
+	        for(var index = 0;index < count;index ++) {
+	            effects.push({
+	            	imageName:key,
+	            	innerText:''
+	            })
+	        }
+	    })
 	}
 	if(card.money) {
 		effects.push({
