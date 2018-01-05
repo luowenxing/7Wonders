@@ -66,6 +66,9 @@ class Resources {
 	mapPositive(op) {
 		return keys.filter(key => this[key] > 0).map(op)
 	}
+	caculateWealth() {
+		
+	}
 }
 
 Resources.sum = function(arr) {
