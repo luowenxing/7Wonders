@@ -158,9 +158,10 @@
             if (callback) {
               callback.apply(this, arguments);
             }
+            this.$emit('onSwipeEnd',this.index)
           };
 
-          once(element, 'webkitTransitionEnd', transitionEndCallback);
+          once(element, 'webkitTransitionEnd', transitionEndCallback.bind(this));
           setTimeout(transitionEndCallback, speed + 100); // webkitTransitionEnd maybe not fire on lower version android.
         } else {
           element.style.webkitTransition = '';

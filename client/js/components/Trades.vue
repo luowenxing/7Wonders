@@ -1,10 +1,11 @@
 <template>
-   	<div class="trade-container">
-        <div class="left-indicator"> 
-            <img :src="require('../../assets/images/Left.png')" />
+   	<div class="trade-container cost">
+        <div class="cost-item">
+            <img :src="require('../../assets/images/Money.png')" />
+            <div> {{ costMoney }} </div>
         </div>
    		<div class="trade left">
-            
+            <img :src="require('../../assets/images/Left.png')" />
             <img v-for="res in leftTrade" :src="require('../../assets/images/' + res.imageName + '.png')"  alt="" />
    		</div>
         <div class="trade right">
@@ -19,7 +20,8 @@
         data(){
             return {
                 leftTrade:[],
-                rightTrade:[]
+                rightTrade:[],
+                costMoney:0,
             }
         },
         props:{
@@ -32,6 +34,9 @@
             let trades = this.trades.map(trade => {
                 return resRepresent(trade.res)
             })
+            this.costMoney = -this.trades.reduce((sum,item) => {
+                return item.costMoney + sum
+            },0)
             this.leftTrade = trades[0]
             this.rightTrade = trades[1]
         }
@@ -43,9 +48,10 @@
         background: white;
         padding: 4px;
         height: 30PX;
+        position: relative;
 	}
 	.trade {
-		flex:;
+		flex:1;
         display:-webkit-flex;
         display: flex;
 	}
@@ -53,9 +59,16 @@
         flex-direction: row-reverse;
     }
 	.trade img {
-		width:20px;
+		width:22px;
         height:100%;
         margin:0px 2px;
         flex:0 0 auto;
 	}
+    .trade-container.cost .cost-item {
+        position: absolute;
+        width: 24px;
+        margin: 0;
+        left: 50%;
+        transform: translateX(-50%);
+    }
 </style>

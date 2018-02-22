@@ -1,5 +1,5 @@
 
-var { Color,Indicators } = require('./util/consts.js')
+var { Color,Indicators,Resource,Directions } = require('./util/consts.js')
 var Resources = require('./cards/Resources.js')
 var { flatten,extend,sum } = require('./util/util.js')
 var { Wonder } = require('./cards/Wonder.js')
@@ -29,8 +29,7 @@ class Player {
             leftPlayer:null,
             rightPlayer:null,
             score:0,
-            lose:0,
-            win:0
+            conflict:[]
         }
         extend(this,{
             ...defaultOptions,
@@ -60,18 +59,18 @@ class Player {
         res.push(this.wonder.res)
         orRes = orRes.concat(this.wonder.orRes)
 
-        return {
-            res:new Resources({
-                Wood:100,
-                Brick:100,
-                Stone:100,
-                Mineral:100,
-                Cloth:100,
-                Glass:100,
-                Paper:100
-            }),
-            orRes
-        }
+        // return {
+        //     res:new Resources({
+        //         Wood:100,
+        //         Brick:100,
+        //         Stone:100,
+        //         Mineral:100,
+        //         Cloth:100,
+        //         Glass:100,
+        //         Paper:100
+        //     }),
+        //     orRes
+        // }
 
         return {
             res:Resources.sum(res),
@@ -99,7 +98,8 @@ class Player {
             cards:this.cards,
             money:this.money,
             score:this.score,
-            wonder:this.wonder
+            wonder:this.wonder,
+            conflict:this.conflict
         }
     }
     get privateInfo(){
@@ -107,7 +107,8 @@ class Player {
             cards:this.cards,
             money:this.money,
             score:this.score,
-            wonder:this.wonder
+            wonder:this.wonder,
+            conflict:this.conflict
         }
     }
     get arms(){
@@ -124,10 +125,32 @@ class Player {
             orTechnics
         }
     }
+    costPerRes(direction){
+        let defaultCostPerRes = {...Resource}
+        Object.keys(Resource).forEach((key) => {
+            defaultCostPerRes[key] = 2
+        })
+
+        let discount = card => card.buyRes && card.directions
+        let cards = this.allCards.filter(discount)
+        let wonder = this.wonder.currentStages.filter(discount)
+        let discounts = cards.concat(wonder)
+        discounts.forEach(discount => {
+            if(discount.directions.filter(x => x === direction).length > 0) {
+                discount.buyRes.forEach(key => {
+                    defaultCostPerRes[key] = 1
+                })
+            }
+        })
+        return defaultCostPerRes
+    }
+
     build(card) {
         this.cards[card.color].push(card)
-        this.updateScore()
-
+        if(card.caculateMoney) {
+            // 计算这张卡增加的money
+            this.money += card.caculateMoney([this.leftPlayer,this,this.rightPlayer])
+        }
     }
     canBuild(card,choice) {
         if(this.cardsName[card.name]) {
@@ -135,70 +158,78 @@ class Player {
             return false
         } else {
             // 免费建设链
-            if(this.freeBuilds[card.name]) {
+            if(this.freeBuilds.filter(x => x === card.name).length > 0) {
                 return true
             } else {
-                let costMoney = 0
-                let cardCostMoney = card.costMoney || 0
-                let trade = choice.trade
-                let tradeResSum = new Resources()
-                if(trade instanceof Array && trade.length === 2) {
-                    trade[0].player = this.leftPlayer
-                    trade[1].player = this.rightPlayer
-                    trade.forEach(t => t.res = new Resources(t.res))
-                    let result = this.canTrade(trade)
-                    if(result.success) {
-                        costMoney = result.costMoney
-                        tradeResSum = Resources.sum(result.trades.map(trade => trade.res))
-                    }
-                }
-
-                if(this.money < (costMoney + cardCostMoney)) { // 不够钱
-                    return false
-                }
-                // 增加了购买的资源
-                let ownRes = this.ownRes
-                let nowRes = {
-                    res:ownRes.res.plus(tradeResSum),
-                    orRes:ownRes.orRes
-                }
-                if(Resources.hasRes(nowRes,card.costs).result) {
-                    // 修建成功
-                    // TODO 应该放在build方法里，这个方法应该是不修改状态的
-                    this.money -= (costMoney + cardCostMoney)
-                    if(card.caculateMoney) {
-                        // 计算这张卡增加的money
-                        this.money += card.caculateMoney([this.leftPlayer,this,this.rightPlayer])
-                    }
-
-                    if(trade instanceof Array && trade.length === 2) { 
-                        // 有交易，加钱
-                        this.leftPlayer.money += trade[0].costMoney
-                        this.rightPlayer.money += trade[1].costMoney
-                    }
-                    return true
-                } else {
-                    return false // 资源不够
-                }
-
+                return this.isDeal(card,choice)
             }
         }
         return false
     }
     buildWonder(card) {
-        
+        let wonder = this.wonder
+        let currentStage = wonder.currentStage
+        wonder.current.stageLevel += 1
+        if(currentStage.money) {
+            // 计算这张卡增加的money
+            this.money += currentStage.money
+        }
     }
+    canBuildWonder(){
+        let wonder = this.wonder.current
+        return this.isDeal(wonder,choice)
+    }
+    isDeal(cardOrWonder,choice) {
+        let costMoney = 0
+        let cardCostMoney = cardOrWonder.costMoney || 0
+        let trade = choice.trade
+        let tradeResSum = new Resources()
+        if(trade instanceof Array && trade.length === 2) {
+            trade[0].player = this.leftPlayer
+            trade[1].player = this.rightPlayer
+            trade.forEach(t => t.res = new Resources(t.res))
+            let result = this.canTrade(trade)
+            if(result.success) {
+                costMoney = result.costMoney
+                tradeResSum = Resources.sum(result.trades.map(trade => trade.res))
+            }
+        }
+
+        if(this.money < (costMoney + cardCostMoney)) { // 不够钱
+            return false
+        }
+        // 增加了购买的资源
+        let ownRes = this.ownRes
+        let nowRes = {
+            res:ownRes.res.plus(tradeResSum),
+            orRes:ownRes.orRes
+        }
+        if(Resources.hasRes(nowRes,cardOrWonder.costs).result) {
+            // 交易成功
+            this.money -= (costMoney + cardCostMoney)
+            if(trade instanceof Array && trade.length === 2) { 
+                // 有交易，加钱
+                this.leftPlayer.money += trade[0].costMoney
+                this.rightPlayer.money += trade[1].costMoney
+            }
+            return true
+        } else {
+            return false // 资源不够
+        }
+    }
+
     // 弃掉一张，+3元
     discard(){
         this.money += 3
     }
 
     canTrade(trades) {
+        let index = 0
         let result = trades.reduce((result,trade) => {
             if(result.success) { // 任何一个失败代表交易不可行
                 let res = trade.res
                 let player = trade.player
-                let costMoney = this.caculateTrade(res,player)
+                let costMoney = this.caculateTrade(res,player,index === 0 ? Directions.Left:Directions.Right)
                 if(costMoney >= 0) {
                     trade.costMoney = costMoney
                     result.trades.push(trade)
@@ -207,6 +238,7 @@ class Player {
                     result.success = false
                 }
             }
+            index += 1
             return result
         },{success:true,trades:[]})
         if(result.success) {
@@ -220,10 +252,12 @@ class Player {
         return result
     }
 
-    caculateTrade(tradeRes,toPlayer){
+    caculateTrade(tradeRes,toPlayer,direction){
         if(Resources.hasRes(toPlayer.sellRes,tradeRes).result) {
             // 计算花费，TODO:考虑Trade贸易卡
-            return tradeRes.wealth * 2
+            let costPerRes = this.costPerRes(direction)
+            let costMoney = tradeRes.mul(costPerRes)
+            return costMoney
         } else {
             return -1
         }
@@ -240,8 +274,10 @@ class Player {
         // 计算科技牌
         let technicsObj = this.technics
         let technicsScore = Technics.caculateScore(technicsObj.technics,technicsObj.orTechnics)
-
-        this.score =  blueScore + moneyScore + wonderScore + indicatorsScore + technicsScore
+        // 计算冲突
+        let conflictScore = sum(this.conflict)
+        this.score =  blueScore + moneyScore + wonderScore + indicatorsScore + technicsScore + conflictScore
+        this.score = Math.floor(this.score)
     }
 }
 

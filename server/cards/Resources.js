@@ -58,6 +58,11 @@ class Resources {
 			return result || this[key] > 0
 		},false) ? Color.Brown : Color.Grey
 	}
+	mul(res2) {
+		return keys.reduce((sum,key) => {
+			return sum + this[key] * res2[key]
+		},0)
+	}
 	equals(res2) {
 		return keys.reduce((result,key) => {
 			return result && this[key] === res2[key]

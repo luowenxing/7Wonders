@@ -2,11 +2,13 @@
     <div class="game-container">
         <PlayerBoards class="game-item"/>
         <HandCards />
+        <Badges />
     </div>
 </template>
 <script>
     import PlayerBoards from './PlayerBoards'
     import HandCards from './HandCards'
+    import Badges from './Badges'
     export default {
         computed:{
             index(){
@@ -15,7 +17,8 @@
         },
         components:{
             PlayerBoards,
-            HandCards
+            HandCards,
+            Badges
         }
     }
 </script>

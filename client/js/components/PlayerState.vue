@@ -38,6 +38,7 @@
         text-align: center;
         position: relative;
         line-height: 0px;
+        height:100%;
     }
     .player-state-container .player-state>img {
         height:100%;

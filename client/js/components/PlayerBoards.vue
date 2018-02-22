@@ -1,5 +1,5 @@
 <template>
-    <swipe ref="swipe" :showIndicators="false" :auto="-1" :initialIndex="index" style="width:100%">
+    <swipe v-on:onSwipeEnd="onSwipeEnd" ref="swipe" :showIndicators="false" :auto="-1" :initialIndex="index" style="width:100%">
         <swipe-item :key="index" v-for="(player,index) in players">
             <div style="height:100%">
                 <PlayerBoard :player="player" /> 
@@ -17,18 +17,21 @@
             players(){
                 return this.$store.state.players
             },
-            status(){
-                return this.$store.state.status
+            currentIndex(){
+                return this.$store.state.currentIndex
             },
             index(){
                 return this.$store.state.index
             }
         },
         watch:{
-            status(val){
-                if(val === GameStatus.NextRound) {
-                    this.$refs.swipe.animateToIndex(this.index)
-                }
+            currentIndex(val){
+                this.$refs.swipe.animateToIndex(val)
+            }
+        },
+        methods:{
+            onSwipeEnd(index){
+                this.$store.commit('updateCurrentIndex',index)
             }
         },
         components:{

@@ -9,8 +9,8 @@ class Game {
         this.playersCount = options.playersCount
         this.players = []
         this.status = GameStatus.Start
-        this.age = 2
-        let wonders = randomWonder(this.playerCount)
+        this.age = 0
+        let wonders = randomWonder(this.playersCount)
         for(let i=0;i<this.playersCount;i++) {
             this.players.push(new Player({
                 wonder:wonders[i]
@@ -55,6 +55,9 @@ class Game {
         })
     }
     getCardsOfPlayer(index){
+        if(this.status === GameStatus.End) {
+            return []
+        }
         let step = this.age %2 === 0 ? -this.round : this.round
         let currIndex = (index + step) % this.playersCount
         currIndex = currIndex < 0 ? this.playersCount + currIndex : currIndex
@@ -97,6 +100,7 @@ class Game {
                     }
                     break
             }
+            player.updateScore()
         } else {
             result.success = false
         }
@@ -107,16 +111,36 @@ class Game {
             this.choosed.fill(false)
             this.round ++
             if(this.round == 6) {
+                this.caculateConflict()
                 this.round = 0
-                this.age = this.age + 1
-                this.status = GameStatus.NextAge
-                // TODO:计算军事冲突
+                if(this.age == 2) {
+                    this.status = GameStatus.End
+                } else {
+                    this.age = this.age + 1
+                    this.status = GameStatus.NextAge
+                }
             } else {
                 this.status = GameStatus.NextRound
             }
             return true
         }
         return false
+    }
+    caculateConflict(){
+        let win = this.age === 0 ? 1 : (this.age === 1 ? 3 : 5)
+        let lose = -1
+        this.players.forEach(player =>{
+            let other = player.rightPlayer
+            if(player.arms > other.arms) {
+                player.conflict.push(win)
+                other.conflict.push(lose)
+            } else if(player.arms < other.arms) {
+                player.conflict.push(lose)
+                other.conflict.push(win)
+            }
+            player.updateScore()
+            other.updateScore()
+        })
     }
     canBuild(index,card,choice){
         let player = this.players[index]

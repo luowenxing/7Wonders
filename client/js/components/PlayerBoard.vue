@@ -32,7 +32,7 @@
         flex:1;
     }
     .player-board .player-wonder {
-        flex:1;
+        flex: 0 0 30%;
     }
     .player-board .player-hand-cards {
         flex:0 0 20%;

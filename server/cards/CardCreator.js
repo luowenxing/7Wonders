@@ -776,10 +776,10 @@ var Yellow = flatten([
     [3,7].map( minPlayers => 
         [{
             name:'EAST TRADING POST',
-            directions:[Directions.Right]
+            directions:[Directions.Left]
         },{
             name:'WEST TRADING POST',
-            directions:[Directions.Left]
+            directions:[Directions.Right]
         }].map(options => 
             new TradeResCard({
                 ...options,

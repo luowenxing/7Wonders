@@ -2,7 +2,7 @@ let { Wonder,WonderSide,Stage } = require('./Wonder.js')
 let { Resource,Technic,WonderAbility,Directions } = require('../util/consts.js')
 let { shuffle } = require('../util/util.js')
 
-let Alexandrie = new Wonder({
+let Alexandrie = () =>  new Wonder({
 	name:'Alexandrie',
 	res:{
 		[Resource.Glass]:1
@@ -69,7 +69,7 @@ let Alexandrie = new Wonder({
 	]
 })
 
-let Artemis = new Wonder({
+let Artemis = () =>  new Wonder({
 	name:'Artemis',
 	res:{
 		[Resource.Paper]:1
@@ -127,7 +127,7 @@ let Artemis = new Wonder({
 })
 
 
-let Babylone = new Wonder({
+let Babylone = () => new Wonder({
 	name:'Babylone',
 	res:{
 		[Resource.Brick]:1
@@ -194,7 +194,7 @@ let Babylone = new Wonder({
 	]
 })
 
-let Gizeh = new Wonder({
+let Gizeh = () => new Wonder({
 	name:'Gizeh',
 	res:{
 		[Resource.Stone]:1
@@ -254,7 +254,7 @@ let Gizeh = new Wonder({
 	]
 })
 
-let Halicarnasse = new Wonder({
+let Halicarnasse = () => new Wonder({
 	name:'Halicarnasse',
 	res:{
 		[Resource.Cloth]:1
@@ -315,7 +315,7 @@ let Halicarnasse = new Wonder({
 	]
 })
 
-let Rhodes = new Wonder({
+let Rhodes = () => new Wonder({
 	name:'Rhodes',
 	res:{
 		[Resource.Mineral]:1
@@ -366,7 +366,7 @@ let Rhodes = new Wonder({
 	]
 })
 
-let Zeus = new Wonder({
+let Zeus = () => new Wonder({
 	name:'Zeus',
 	res:{
 		[Resource.Wood]:1
@@ -425,8 +425,15 @@ let Zeus = new Wonder({
 })
 
 let randomWonder = function(count) {
-	let wonders = [Alexandrie,Artemis,Babylone,Gizeh,Halicarnasse,Rhodes,Zeus]
-	return shuffle(wonders).slice(count)
+	let wonders = [Alexandrie(),Artemis(),Babylone(),Halicarnasse(),Gizeh(),Rhodes(),Zeus()]
+	let backWonders = [Alexandrie(),Artemis(),Babylone(),Halicarnasse(),Gizeh(),Rhodes(),Zeus()]
+	let shuffled = shuffle(wonders)
+	let backWondersShuffled = shuffle(backWonders)
+	if(count > wonders.length) {
+		return shuffled.concat(backWondersShuffled.slice(0,count - wonders.length))
+	} else {
+		return shuffled.slice(0,count)
+	}
 } 
 
 module.exports = randomWonder

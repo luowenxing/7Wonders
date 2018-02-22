@@ -6,7 +6,9 @@
             </div>
             <PlayerState class="wonder-player-state" :player="Player" />
         </div>
-
+        <div class="wonder-conflict">
+            <img v-for="num in player.conflict" :src="require('../../assets/images/Win' + num + '.png')" />
+        </div>
         <div class="wonder-stages">
             <div v-for="(stage,index) in wonderStages" class="wonder-stage" :class="{build:isBuild(index)}">
                 <div class="wonder-stage-container">
@@ -57,6 +59,9 @@
             wonderStages(){
                 return this.Player.wonder.current.stages
             },
+            conflict(){
+                return this.Player.conflict.sort()
+            }
         },
         components:{
             Cost,
@@ -90,6 +95,13 @@
         flex:1;
         height:40px;
     }
+    .wonder .wonder-conflict {
+    }
+    .wonder .wonder-conflict img{
+        float: right;
+        width:10%;
+    }
+
     .wonder .wonder-stages {
         flex:1;
         display: -webkit-flex;

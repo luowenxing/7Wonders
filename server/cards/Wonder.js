@@ -15,8 +15,16 @@ class Wonder {
 		let current = this.current
 		return current.stages.slice(0,current.stageLevel)
 	}	
+	get currentStage(){
+		let current = this.current
+		return current.stages[current.stageLevel]
+	}
 	get score(){
 		return sum(this.currentStages,'score')
+	}
+	get costs(){
+		let current = this.current
+		return current.stages[current.stageLevel].costs
 	}
 	get arms(){
 		return sum(this.currentStages,'arms')
@@ -44,7 +52,7 @@ class Wonder {
 class WonderSide {
 	constructor(options) {
 		this.stages = options.stages
-		this.stageLevel = 3
+		this.stageLevel = 0
 	}
 }
 

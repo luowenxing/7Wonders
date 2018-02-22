@@ -59,7 +59,7 @@
 
             },
             leave(el,done){
-                let a = {...{a:1}}
+                el.className += ' animating'
                 if(this.status === GameStatus.Start) {
                     done()
                 }
@@ -83,7 +83,7 @@
             },
             afterLeave(el){
                 //el.style.transform = ''
-                
+                el.className = el.className.replace(' animating','') 
             },
             beforeEnter(el){
 
@@ -200,6 +200,7 @@
         bottom:0;
         width:100%;
         height:20%;
+        background-image:url('../../assets/images/HandCardBoard.png');
     }
     .hand-cards>div {
         width:100%;

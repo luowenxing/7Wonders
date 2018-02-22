@@ -9,13 +9,15 @@ export default new Vuex.Store({
         players:[],
         index:0,
         cards:[],
-        status:0
+        status:0,
+        currentIndex:0
     },
     getters,
     mutations:{
         updateGame(store,info){
             store.players = info.players
             store.index = info.index
+            store.currentIndex = info.index
             store.cards = info.cards
             store.status = info.status
             console.log(info.cards)
@@ -31,6 +33,9 @@ export default new Vuex.Store({
         },
         insertCard(store,{index,card}){
             store.cards.splice(index,0,card)
+        },
+        updateCurrentIndex(store,index) {
+            store.currentIndex = index
         }
     }
 })

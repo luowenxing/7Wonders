@@ -34,6 +34,7 @@
         display:flex;
         display:-webkit-flex;
         padding:0px 2px;
+        background-image:url('../../assets/images/PlayerBoard.png');
     }
     .builds-container .builds-catagory{
         flex:1;

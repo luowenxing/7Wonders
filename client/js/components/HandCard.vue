@@ -8,13 +8,18 @@
                 <div class="card-name"> {{ card.name }} </div>
                 <CardEffect :card="card" />
             </div>
+            <div class="card-can-build" v-if="type != 'card-detail'">
+                <img style="width:100%" :src="require('../../assets/images/' + canBuildImg + '.png')" />
+            </div>
         </div>
     </div>
 </template>
 <script>
     import { Color } from 'shared/util/consts.js'
+    import { getCanBuildCard  } from '../lib/CardHelper.js'
     import CardEffect from './CardEffect.vue'
     import Cost from './Cost.vue'
+    import { mapGetters } from 'vuex'
     export default {
         props:{
             card:{
@@ -25,6 +30,10 @@
                 type:Number,
                 required:true
             },
+            type:{
+                type:String,
+                required:false
+            }
         },
         computed:{
             handCardStyle(){
@@ -42,6 +51,23 @@
                 let color = this.card.color
                 return color === Color.Yellow || color === Color.Grey
             },
+            canBuildImg(){
+                let result = getCanBuildCard.call(this,this.card)
+                if(result.success) {
+                    if(result.needTrade) {
+                        return 'ques'
+                    } else {
+                        return 'ok'
+                    }
+                } else {
+                    return 'no'
+                }
+            },
+            ...mapGetters([
+              'currentPlayer',
+              'leftPlayer',
+              'rightPlayer'
+            ]),
         },
         components:{
             CardEffect,
@@ -82,6 +108,16 @@
         overflow: hidden;
         white-space: nowrap;
         text-overflow: ellipsis;
+    }
+
+    .card-container .card .card-can-build {
+        position: absolute;
+        bottom:10%;
+        left:10%;
+        width:30%;
+    }
+    .card-container.animating .card .card-can-build {
+        display: none;
     }
 
 
