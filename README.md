@@ -6,9 +6,9 @@
 
 # How To Play
 ### For Test
-* npm install
-* npm run dev
-* node -harmony server/app.js
+* `npm install`
+* `npm run dev`
+* `node -harmony server/app.js`
 * open 3 tabs of http://http://localhost:8080/ and then enjoy it!
 
 ### For Play
